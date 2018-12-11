@@ -40,7 +40,7 @@ services:
 #        network_mode: 'host'
 #
     keystone-api:
-        build: 'docker/keystone/.'
+        image: 'hogepodge/loci-keystone:rocky-leap15'
         env_file: './config'
         hostname: 'keystone'
         extra_hosts:
@@ -54,6 +54,9 @@ services:
         links:
             - 'mariadb'
             - 'rabbitmq'
+        volumes:
+            - 'scripts/common:/scripts/common'
+            - 'scripts/keystone:/scripts/keystone'
         command: '/start-keystone-api.sh'
         depends_on:
             - 'mariadb'

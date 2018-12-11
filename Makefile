@@ -5,7 +5,8 @@
 
 OPENSTACK_RELEASE=rocky
 DOCKERHUB_NAMESPACE=hogepodge
-DISTRO=centos
+DISTRO=leap15
+DIST_PACKAGES="which mariadb"
 EMPTY:=
 
 BUILD = docker build
@@ -91,7 +92,7 @@ $(LOCI_PROJECTS):
 		--build-arg PROJECT_REF=stable/$(OPENSTACK_RELEASE) \
 		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/base:$(DISTRO) \
 		--build-arg WHEELS=$(DOCKERHUB_NAMESPACE)/loci-requirements:$(OPENSTACK_RELEASE)-$(DISTRO) \
-		--build-arg EXTRA_BINDEP=bindep.txt \
+		--build-arg DIST_PACKAGES=$(DIST_PACKAGES) \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO) --no-cache
 	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
 

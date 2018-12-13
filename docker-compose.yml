@@ -73,11 +73,11 @@ services:
 #        command: '/scripts/swift/start-service.sh'
 
 #    glance-api:
-#        build: 'docker/glance/.'
+#        image: 'hogepodge/loci-glance:rocky-leap15'
 #        env_file: './config'
 #        hostname: 'glance-api'
 #        extra_hosts:
-#            - "control:192.168.1.6"
+#            - "control:192.168.1.4"
 #        links:
 #            - 'mariadb'
 #            - 'rabbitmq'
@@ -89,8 +89,8 @@ services:
 #            - 'mariadb'
 #            - 'rabbitmq'
 #            - 'keystone-api'
-#            - 'swift-proxy'
-#        command: '/start-glance-api.sh'
+#          # - 'swift-proxy'
+#        command: '/scripts/glance/start-glance-api.sh'
 
 #    glance-registry:
 #        build: 'docker/glance/.'

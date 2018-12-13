@@ -6,7 +6,8 @@
 OPENSTACK_RELEASE=rocky
 DOCKERHUB_NAMESPACE=hogepodge
 DISTRO=leap15
-DIST_PACKAGES="which mariadb"
+DIST_PACKAGES="which mariadb curl"
+#PIP_PACKAGES="python-openstackclient python-swiftclient"
 EMPTY:=
 
 BUILD = docker build
@@ -85,7 +86,6 @@ loci-build-base:
 	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/base:$(DISTRO) /tmp/loci/dockerfiles/$(DISTRO)
 	$(PUSH)/base:$(DISTRO)
 
-
 $(LOCI_PROJECTS):
 	$(BUILD) /tmp/loci \
 		--build-arg PROJECT=$(subst loci-,$(EMPTY),$@) \
@@ -93,6 +93,7 @@ $(LOCI_PROJECTS):
 		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/base:$(DISTRO) \
 		--build-arg WHEELS=$(DOCKERHUB_NAMESPACE)/loci-requirements:$(OPENSTACK_RELEASE)-$(DISTRO) \
 		--build-arg DIST_PACKAGES=$(DIST_PACKAGES) \
+		--build-arg PIP_PACKAGES=$(PIP_PACKAGES)
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO) --no-cache
 	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
 

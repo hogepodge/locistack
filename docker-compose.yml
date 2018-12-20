@@ -2,7 +2,6 @@ version: '2.2'
 
 volumes:
     mariadb-volume:
-    ironic-imagedata-volume:
 
 services:
     mariadb:
@@ -27,18 +26,6 @@ services:
         expose:
             - '5672'
 
-#    dnsmasq-ipmi:
-#        build: 'docker/dnsmasq'
-#        env_file: './config'
-#        ports:
-#            - '53:53'
-#            - '53:53/udp'
-#        expose:
-#            - '53'
-#        cap_add:
-#            - 'NET_ADMIN'
-#        network_mode: 'host'
-#
     keystone-api:
         image: 'hogepodge/loci-keystone:rocky-leap15'
         env_file: './config'
@@ -55,9 +42,10 @@ services:
             - 'mariadb'
             - 'rabbitmq'
         volumes:
-            - 'scripts/common:/scripts/common'
-            - 'scripts/keystone:/scripts/keystone'
-        command: '/start-keystone-api.sh'
+            - './scripts/common:/scripts/common'
+            - './scripts/keystone:/scripts/keystone'
+            - './tls:/tls'
+        command: '/scripts/keystone/start-keystone-api.sh'
         depends_on:
             - 'mariadb'
             - 'rabbitmq'
@@ -67,7 +55,7 @@ services:
 #        env_file: './config'
 #        hostname: 'swift'
 #        extra_hosts:
-#            - "control:192.168.1.6"
+#            - "control:192.168.1.4"
 #        privileged: true
 #        ports:
 #            - '8888:8080'
@@ -82,14 +70,14 @@ services:
 #            - 'mariadb'
 #            - 'rabbitmq'
 #            - 'keystone-api'
-#        command: '/start-service.sh'
-#
+#        command: '/scripts/swift/start-service.sh'
+
 #    glance-api:
-#        build: 'docker/glance/.'
+#        image: 'hogepodge/loci-glance:rocky-leap15'
 #        env_file: './config'
 #        hostname: 'glance-api'
 #        extra_hosts:
-#            - "control:192.168.1.6"
+#            - "control:192.168.1.4"
 #        links:
 #            - 'mariadb'
 #            - 'rabbitmq'
@@ -101,8 +89,8 @@ services:
 #            - 'mariadb'
 #            - 'rabbitmq'
 #            - 'keystone-api'
-#            - 'swift-proxy'
-#        command: '/start-glance-api.sh'
+#          # - 'swift-proxy'
+#        command: '/scripts/glance/start-glance-api.sh'
 
 #    glance-registry:
 #        build: 'docker/glance/.'

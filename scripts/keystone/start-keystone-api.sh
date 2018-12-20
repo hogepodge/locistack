@@ -23,12 +23,12 @@ keystone-manage db_sync
 keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
 keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
 keystone-manage bootstrap --bootstrap-password $KEYSTONE_ADMIN_PASSWORD \
-  --bootstrap-admin-url http://${CONTROL_HOST_IP}:35357/v3/ \
-  --bootstrap-internal-url http://${CONTROL_HOST_IP}:5000/v3/ \
-  --bootstrap-public-url http://${CONTROL_HOST_IP}:5000/v3/ \
+  --bootstrap-admin-url https://${CONTROL_HOST_IP}:35357/v3/ \
+  --bootstrap-internal-url https://${CONTROL_HOST_IP}:5000/v3/ \
+  --bootstrap-public-url https://${CONTROL_HOST_IP}:5000/v3/ \
   --bootstrap-region-id RegionOne
 
 # Start uwsgi
-uwsgi --http :35357 --wsgi-file /var/lib/openstack/bin/keystone-wsgi-admin &
-uwsgi --http :5000 --wsgi-file /var/lib/openstack/bin/keystone-wsgi-public &
+uwsgi --uid 42424 --gid 42424 --https :35357,/tls/openstack.crt,/tls/openstack.key --wsgi-file /var/lib/openstack/bin/keystone-wsgi-admin &
+uwsgi --uid 42424 --gid 42424 --https :5000,/tls/openstack.crt,/tls/openstack.key --wsgi-file /var/lib/openstack/bin/keystone-wsgi-public &
 wait %1 %2

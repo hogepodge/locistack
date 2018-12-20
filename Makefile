@@ -83,7 +83,7 @@ loci-build-base:
 	rm -rf /tmp/loci
 	git clone https://git.openstack.org/openstack/loci.git /tmp/loci
 	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/base:$(DISTRO) /tmp/loci/dockerfiles/$(DISTRO)
-	$(PUSH)/base:$(DISTRO)
+#	$(PUSH)/base:$(DISTRO)
 
 
 $(LOCI_PROJECTS):
@@ -94,7 +94,7 @@ $(LOCI_PROJECTS):
 		--build-arg WHEELS=$(DOCKERHUB_NAMESPACE)/loci-requirements:$(OPENSTACK_RELEASE)-$(DISTRO) \
 		--build-arg DIST_PACKAGES=$(DIST_PACKAGES) \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO) --no-cache
-	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+#	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
 
 loci: loci-build-base $(LOCI_PROJECTS)
 
@@ -107,4 +107,4 @@ loci: loci-build-base $(LOCI_PROJECTS)
 openstack-client:
 	$(BUILD) service-containers/openstack-client/. \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
-	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+#	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)

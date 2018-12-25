@@ -1,6 +1,6 @@
 #!/bin/bash
 
-/wait-for-it.sh --host=mariadb --port=3306 -t 60
+/scripts/common/wait-for-it.sh --host=mariadb --port=3306 -t 60
 
 # because we can't actually trust MariaDB to be ready
 sleep 10

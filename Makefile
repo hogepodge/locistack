@@ -3,7 +3,8 @@
 #
 ####
 
-OPENSTACK_RELEASE=rocky
+OPENSTACK_RELEASE=master
+#STABLE=stable/
 DOCKERHUB_NAMESPACE=hogepodge
 DISTRO=leap15
 DIST_PACKAGES="which mariadb curl"
@@ -20,7 +21,7 @@ swift-storage: creates storage for swift"
 docs:
 	echo $(DOCSTRING)
 
-build: loci openstack-client
+build: locistack openstack-client
 
 certs: tls tls/openstack.key tls/openstack.csr tls/openstack.crt
 
@@ -66,38 +67,46 @@ swift-storage:
 ##### Loci Containers
 # Building the Loci packages and push them to Docker Hub.
 #
-# make loci: build and push all of the Loci images
+# make locistack: build and push all of the Loci images
 #####
 
-LOCI_PROJECTS = loci-requirements \
-				loci-keystone \
-				loci-glance \
-				loci-cinder \
-				loci-heat \
-				loci-horizon \
-				loci-ironic \
-				loci-neutron \
-				loci-nova \
-				loci-swift \
+LOCI_PROJECTS = locistack-requirements \
+				locistack-keystone \
+				locistack-glance
+#				loci-cinder \
+#				loci-heat \
+#				loci-horizon \
+#				loci-ironic \
+#				loci-neutron \
+#				loci-nova \
+#				loci-swift \
 
-loci-build-base:
+locistack-build-base:
 	rm -rf /tmp/loci
 	git clone https://git.openstack.org/openstack/loci.git /tmp/loci
-	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/base:$(DISTRO) /tmp/loci/dockerfiles/$(DISTRO)
-#	$(PUSH)/base:$(DISTRO)
+	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/locistack-base:$(DISTRO) /tmp/loci/dockerfiles/$(DISTRO)
+	$(PUSH)/locistack-base:$(DISTRO)
 
 $(LOCI_PROJECTS):
 	$(BUILD) /tmp/loci \
-		--build-arg PROJECT=$(subst loci-,$(EMPTY),$@) \
-		--build-arg PROJECT_REF=stable/$(OPENSTACK_RELEASE) \
-		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/base:$(DISTRO) \
-		--build-arg WHEELS=$(DOCKERHUB_NAMESPACE)/loci-requirements:$(OPENSTACK_RELEASE)-$(DISTRO) \
+		--build-arg PROJECT=$(subst locistack-,$(EMPTY),$@) \
+		--build-arg PROJECT_REF=$(STABLE)$(OPENSTACK_RELEASE) \
+		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-base:$(DISTRO) \
+		--build-arg WHEELS=$(DOCKERHUB_NAMESPACE)/locistack-requirements:$(OPENSTACK_RELEASE)-$(DISTRO) \
 		--build-arg DIST_PACKAGES=$(DIST_PACKAGES) \
 		--build-arg PIP_PACKAGES=$(PIP_PACKAGES) \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO) --no-cache
-#	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
 
-loci: loci-build-base $(LOCI_PROJECTS)
+locistack-requirements:
+	$(BUILD) /tmp/loci \
+		--build-arg PROJECT=requirements \
+		--build-arg PROJECT_REF=$(STABLE)$(OPENSTACK_RELEASE) \
+		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-base:$(DISTRO) \
+		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO) --no-cache
+	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+
+locistack: locistack-build-base $(LOCI_PROJECTS)
 
 #### OpenStack Client
 # Build the OpenStack Client
@@ -108,4 +117,4 @@ loci: loci-build-base $(LOCI_PROJECTS)
 openstack-client:
 	$(BUILD) service-containers/openstack-client/. \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
-#	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)

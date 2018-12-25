@@ -2,6 +2,7 @@ version: '2.2'
 
 volumes:
     mariadb-volume:
+    glance-images:
 
 services:
     mariadb:
@@ -27,11 +28,11 @@ services:
             - '5672'
 
     keystone-api:
-        image: 'hogepodge/loci-keystone:rocky-leap15'
+        image: 'hogepodge/locistack-keystone:master-leap15'
         env_file: './config'
         hostname: 'keystone'
         extra_hosts:
-            - "control:192.168.1.4"
+            - "control:192.168.30.103"
         ports:
             - '5000:5000'
             - '35357:35357'
@@ -50,67 +51,54 @@ services:
             - 'mariadb'
             - 'rabbitmq'
 
-#    swift-proxy:
-#        build: 'docker/swift/.'
-#        env_file: './config'
-#        hostname: 'swift'
-#        extra_hosts:
-#            - "control:192.168.1.4"
-#        privileged: true
-#        ports:
-#            - '8888:8080'
-#        expose:
-#            - '8080'
-#        volumes:
-#            - '/dev/loop0:/dev/loop1'
-#        networks:
-#            swiftnet:
-#                ipv4_address: '172.16.16.16'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#        command: '/scripts/swift/start-service.sh'
+    glance-api:
+        image: 'hogepodge/locistack-glance:master-leap15'
+        env_file: './config'
+        hostname: 'glance-api'
+        extra_hosts:
+            - "control:192.168.30.103"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '9292:9292'
+        expose:
+            - '9292'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/glance:/scripts/glance'
+            - './tls:/tls'
+            - 'glance-images:/images'
+        command: '/scripts/glance/start-glance-api.sh'
 
-#    glance-api:
-#        image: 'hogepodge/loci-glance:rocky-leap15'
-#        env_file: './config'
-#        hostname: 'glance-api'
-#        extra_hosts:
-#            - "control:192.168.1.4"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        ports:
-#            - '9292:9292'
-#        expose:
-#            - '9292'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#          # - 'swift-proxy'
-#        command: '/scripts/glance/start-glance-api.sh'
+    glance-registry:
+        image: 'hogepodge/locistack-glance:master-leap15'
+        env_file: './config'
+        hostname: 'glance-registry'
+        extra_hosts:
+            - "control:192.168.30.103"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '9191:9191'
+        expose:
+            - '9191'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'glance-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/glance:/scripts/glance'
+            - './tls:/tls'
+        command: '/scripts/glance/start-glance-registry.sh'
 
-#    glance-registry:
-#        build: 'docker/glance/.'
-#        env_file: './config'
-#        hostname: 'glance-registry'
-#        extra_hosts:
-#            - "control:192.168.1.6"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        ports:
-#            - '9291:9291'
-#        expose:
-#            - '9191'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'glance-api'
-#        command: '/start-glance-registry.sh'
 #
 #    neutron-server:
 #        build: 'docker/neutron/.'

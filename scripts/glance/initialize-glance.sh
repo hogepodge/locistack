@@ -1,6 +1,5 @@
 #!/bin/bash
 set -x
-/generate.glance-api.conf
-/generate.glance-registry.conf
-/generate.glance-swift.conf
-/initialize-glance-database.sh
+/scripts/glance/generate.glance-api.conf
+/scripts/glance/generate.glance-registry.conf
+/scripts/glance/initialize-glance-database.sh

@@ -6,8 +6,12 @@
 OPENSTACK_RELEASE=master
 #STABLE=stable/
 DOCKERHUB_NAMESPACE=hogepodge
-DISTRO=leap15
-DIST_PACKAGES="which mariadb curl"
+DISTRO=centos
+requirements-DIST_PACKAGES=""
+keystone-DIST_PACKAGES="curl mariadb vim wget which"
+glance-DIST_PACKAGES="curl mariadb vim wget which"
+neutron-DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived mariadb openvswitch uuid vim wget which"
+DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived liberasurecode libvirt0 libxml2 mariadb memcached openvswitch rsync supervisor uuid vim wget which"
 PIP_PACKAGES="python-openstackclient python-swiftclient"
 EMPTY:=
 
@@ -72,12 +76,12 @@ swift-storage:
 
 LOCI_PROJECTS = locistack-requirements \
 				locistack-keystone \
-				locistack-glance
+				locistack-glance \
+				locistack-neutron
 #				loci-cinder \
 #				loci-heat \
 #				loci-horizon \
 #				loci-ironic \
-#				loci-neutron \
 #				loci-nova \
 #				loci-swift \
 
@@ -85,7 +89,7 @@ locistack-build-base:
 	rm -rf /tmp/loci
 	git clone https://git.openstack.org/openstack/loci.git /tmp/loci
 	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/locistack-base:$(DISTRO) /tmp/loci/dockerfiles/$(DISTRO)
-	$(PUSH)/locistack-base:$(DISTRO)
+#	$(PUSH)/locistack-base:$(DISTRO)
 
 $(LOCI_PROJECTS):
 	$(BUILD) /tmp/loci \
@@ -93,10 +97,10 @@ $(LOCI_PROJECTS):
 		--build-arg PROJECT_REF=$(STABLE)$(OPENSTACK_RELEASE) \
 		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-base:$(DISTRO) \
 		--build-arg WHEELS=$(DOCKERHUB_NAMESPACE)/locistack-requirements:$(OPENSTACK_RELEASE)-$(DISTRO) \
-		--build-arg DIST_PACKAGES=$(DIST_PACKAGES) \
+		--build-arg DIST_PACKAGES=$($(subst locistack-,$(EMPTY),$@)-DIST_PACKAGES) \
 		--build-arg PIP_PACKAGES=$(PIP_PACKAGES) \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO) --no-cache
-	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+#	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
 
 locistack-requirements:
 	$(BUILD) /tmp/loci \
@@ -117,4 +121,4 @@ locistack: locistack-build-base $(LOCI_PROJECTS)
 openstack-client:
 	$(BUILD) service-containers/openstack-client/. \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
-	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+#	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)

@@ -9,10 +9,10 @@ PRIVATE_ENDPOINT=http://${CONTROL_HOST_PRIVATE_IP}:9696
 ADMIN_ENDPOINT=http://${CONTROL_HOST_PRIVATE_IP}:9696
 
 
-/scripts/common/initialize-keystone "${SERVICE_NAME}" \
-                                    "${SERVICE_TYPE}" \
-                                    "${SERVICE_DESCRIPTION}" \
-                                    "${SERVICE_PASSWORD}" \
-                                    "${PUBLIC_ENDPOINT}" \
-                                    "${PRIVATE_ENDPOINT}" \
-                                    "${ADMIN_ENDPOINT}"
+/scripts/common/initialize-keystone.sh "${SERVICE_NAME}" \
+                                       "${SERVICE_TYPE}" \
+                                       "${SERVICE_DESCRIPTION}" \
+                                       "${SERVICE_PASSWORD}" \
+                                       "${PUBLIC_ENDPOINT}" \
+                                       "${PRIVATE_ENDPOINT}" \
+                                       "${ADMIN_ENDPOINT}"

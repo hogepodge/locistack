@@ -1,14 +1,17 @@
 #!/bin/bash
 set -x
 
-
 # Make the ml2 plugin directory, copy the config over, and link to it
 mkdir -p /etc/neutron/plugins/ml2
-cp /scripts/neutron/plugins/ml2/ml2_conf.ini /ets/neutron/plugins/ml2/ml2_conf.ini
+cp /scripts/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugins/ml2/ml2_conf.ini
 ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
 
 # Copy over all the rootwrap and policy configuration
-cp -R /var/lib/openstack/etc/neutron /etc/neutron
+cp -R /var/lib/openstack/etc/neutron/* /etc/neutron/.
+
+# Copy over static configurations
+cp /scripts/neutron/dhcp_agent.ini /etc/neutron/dhcp_agent.ini
+cp /scripts/neutron/l3_agent.ini /etc/neutron/l3_agent.ini
 
 # generate the rest of the configurations
 /scripts/neutron/plugins/ml2/generate.linuxbridge_agent.ini.sh

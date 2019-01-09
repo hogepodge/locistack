@@ -2,7 +2,7 @@
 
 set -x
 
-/scripts/neutron/generate.configs.sh
+/scripts/neutron/generate-configs.sh
 /scripts/neutron/initialize-keystone.sh
 /scripts/neutron/initialize-neutron-database.sh
 

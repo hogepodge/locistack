@@ -28,11 +28,11 @@ services:
             - '5672'
 
     keystone-api:
-        image: 'hogepodge/locistack-keystone:master-leap15'
+        image: 'hogepodge/locistack-keystone:master-centos'
         env_file: './config'
         hostname: 'keystone'
         extra_hosts:
-            - "control:192.168.30.103"
+            - "control:192.168.1.32"
         ports:
             - '5000:5000'
             - '35357:35357'
@@ -52,11 +52,11 @@ services:
             - 'rabbitmq'
 
     glance-api:
-        image: 'hogepodge/locistack-glance:master-leap15'
+        image: 'hogepodge/locistack-glance:master-centos'
         env_file: './config'
         hostname: 'glance-api'
         extra_hosts:
-            - "control:192.168.30.103"
+            - "control:192.168.1.32"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -76,11 +76,11 @@ services:
         command: '/scripts/glance/start-glance-api.sh'
 
     glance-registry:
-        image: 'hogepodge/locistack-glance:master-leap15'
+        image: 'hogepodge/locistack-glance:master-centos'
         env_file: './config'
         hostname: 'glance-registry'
         extra_hosts:
-            - "control:192.168.30.103"
+            - "control:192.168.1.32"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -99,25 +99,29 @@ services:
             - './tls:/tls'
         command: '/scripts/glance/start-glance-registry.sh'
 
-#
-#    neutron-server:
-#        build: 'docker/neutron/.'
-#        env_file: './config'
-#        hostname: 'neutron-server'
-#        extra_hosts:
-#            - "control:192.168.1.6"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        ports:
-#            - '9696:9696'
-#        expose:
-#            - '9696'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#        command: '/start-neutron-server.sh'
+    neutron-server:
+        image: 'hogepodge/locistack-neutron:master-centos'
+        env_file: './config'
+        hostname: 'neutron-server'
+        extra_hosts:
+            - "control:192.168.1.32"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '9696:9696'
+        expose:
+            - '9696'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/neutron:/scripts/neutron'
+            - './tls:/tls'
+        command: '/scripts/neutron/start-neutron-server.sh'
+
 #
 #    neutron-linuxbridge-agent:
 #        build: 'docker/neutron/.'

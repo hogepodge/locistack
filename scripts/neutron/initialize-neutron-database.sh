@@ -15,7 +15,11 @@ EOF
 
 mysql -u root -p$MYSQL_ROOT_PASSWORD -h ${CONTROL_HOST_IP} < /tmp/create_database.sql
 
-/scripts/neutron/generate.configs.sh
+# assumes /scripts/neutron/generate-configs.sh has already been run
 
 neutron-db-manage --config-file /etc/neutron/neutron.conf \
-  --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head
+                  --config-file /etc/neutron/plugins/ml2/ml2_conf.ini \
+                  --config-file /etc/neutron/plugins/ml2/linuxbridge_agent.ini \
+                  --config-file /etc/neutron/dhcp_agent.ini \
+                  --config-file /etc/neutron/l3_agent.ini \
+                  upgrade head

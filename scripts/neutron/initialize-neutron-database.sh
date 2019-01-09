@@ -1,6 +1,6 @@
 #!/bin/bash
 
-/wait-for-it.sh --host=mariadb --port=3306 -t 60
+/scripts/common/wait-for-it.sh --host=mariadb --port=3306 -t 60
 
 # because we can't actually trust MariaDB to be ready
 sleep 5
@@ -15,7 +15,7 @@ EOF
 
 mysql -u root -p$MYSQL_ROOT_PASSWORD -h ${CONTROL_HOST_IP} < /tmp/create_database.sql
 
-/generate.configs.sh
+/scripts/neutron/generate.configs.sh
 
 neutron-db-manage --config-file /etc/neutron/neutron.conf \
   --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head

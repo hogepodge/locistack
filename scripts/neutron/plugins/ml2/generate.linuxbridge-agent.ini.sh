@@ -6,7 +6,7 @@ physical_interface_mappings = provider:${PROVIDER_INTERFACE}
 
 [vxlan]
 enable_vxlan = true
-local_ip = ${OVERLAY_INTERFACE_IP_ADDRESS}
+local_ip = ${PROVIDER_IP_ADDRESS}
 l2_population = true
 
 [securitygroup]

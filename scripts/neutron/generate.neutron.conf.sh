@@ -2,26 +2,35 @@
 set -x
 cat > /etc/neutron/neutron.conf <<- EOF
 [DEFAULT]
+
 core_plugin = ml2
-service_plugins = 
+service_plugins = router
+allow_overlapping_ips = true
+
 transport_url = rabbit://guest:${RABBITMQ_DEFAULT_PASS}@${CONTROL_HOST}
+
 auth_strategy = keystone
+
 notify_nova_on_port_status_changes = true
 notify_nova_on_port_data_changes = true
+
 bind_port = 9696
 host = ${CONTROL_HOST}
 #nova_metadata_ip = ${CONTROL_HOST_IP}
 metadata_proxy_shared_secret = ${METADATA_SECRET}
 api_workers = 1
+
 debug = ${NEUTRON_DEBUG}
-#default_log_levels = amqp=WARN,amqplib=WARN,boto=WARN,qpid=WARN,sqlalchemy=WARN,suds=INFO,oslo.messaging=DEBUG,oslo_messaging=DEBUG,iso8601=WARN,requests.packages.urllib3.connectionpool=WARN,urllib3.connectionpool=WARN,websocket=WARN,requests.packages.urllib3.util.retry=WARN,urllib3.util.retry=WARN,keystonemiddleware=WARN,routes.middleware=WARN,stevedore=WARN,taskflow=WARN,keystoneauth=WARN,oslo.cache=INFO,dogpile.core.dogpile=INFO
+
 [database]
 connection = mysql+pymysql://neutron:${MYSQL_ROOT_PASSWORD}@${CONTROL_HOST_IP}/neutron
 max_pool_size=200
 max_overflow=300
+
 [keystone_authtoken]
-auth_uri = http://${CONTROL_HOST_IP}:5000
-auth_url = http://${CONTROL_HOST_IP}:35357
+
+www_authenticate_uri = https://${CONTROL_HOST_IP}:5000
+auth_url = https://${CONTROL_HOST_IP}:5000
 auth_type = password
 project_domain_name = Default
 user_domain_name = Default
@@ -29,8 +38,11 @@ region_name = RegionOne
 project_name = service
 username = neutron
 password = ${SERVICE_PASSWORD}
+insecure = true
+
 [nova]
-auth_url = http://${CONTROL_HOST_IP}:35357
+#auth_url = https://${CONTROL_HOST_IP}:35357
+auth_url = https://${CONTROL_HOST_IP}:5000
 auth_type = password
 project_domain_name = Default
 user_domain_name = Default
@@ -38,8 +50,11 @@ region_name = RegionOne
 project_name = service
 username = nova
 password = ${SERVICE_PASSWORD}
+insecure = true
+
 [oslo_concurrency]
 lock_path = /var/lib/neutron/tmp
+
 [privsep]
 helper_command=/var/lib/openstack/bin/neutron-rootwrap /etc/neutron/rootwrap.conf privsep-helper
 EOF

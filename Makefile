@@ -54,6 +54,9 @@ kernel-modules:
 	sudo modprobe ip_conntrack
 	sudo modprobe ip_conntrack_ftp
 	sudo modprobe ip_nat_ftp
+	sudo modprobe br_netfilter
+	sudo sysctl net.bridge.bridge-nf-call-iptables=1
+	sudo sysctl net.bridge.bridge-nf-call-ip6tables=1
 
 ##### Swift Storage Directory
 # Make the loopback device to hold swift storage data
@@ -78,11 +81,11 @@ LOCI_PROJECTS = locistack-requirements \
 				locistack-keystone \
 				locistack-glance \
 				locistack-neutron
+#				loci-nova \
 #				loci-cinder \
 #				loci-heat \
 #				loci-horizon \
 #				loci-ironic \
-#				loci-nova \
 #				loci-swift \
 
 locistack-build-base:

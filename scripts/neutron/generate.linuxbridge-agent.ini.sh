@@ -1,0 +1,12 @@
+#!/bin/bash
+set -x
+cat > /etc/neutron/plugins/ml2/linuxbridge_agent.ini <<- EOF
+[linux_bridge]
+physical_interface_mappings = provider:${PROVIDER_INTERFACE}
+[vxlan]
+enable_vxlan = false
+[securitygroup]
+#enable_security_group = true
+enable_security_group = false
+firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
+EOF

@@ -6,8 +6,11 @@ mkdir -p /etc/neutron/plugins/ml2
 cp /scripts/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugins/ml2/ml2_conf.ini
 ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
 
-# Copy over all the rootwrap and policy configuration
+# Copy over all the rootwrap and policy configuration, this guarantees latest for this release
 cp -R /var/lib/openstack/etc/neutron/* /etc/neutron/.
+
+# We do want our own rootwrap config to find the executables, though.
+cp /scripts/neutron/rootwrap.conf /etc/neutron/.
 
 # Copy over static configurations
 cp /scripts/neutron/dhcp_agent.ini /etc/neutron/dhcp_agent.ini

@@ -11,7 +11,8 @@ requirements-DIST_PACKAGES=""
 keystone-DIST_PACKAGES="curl mariadb vim wget which"
 glance-DIST_PACKAGES="curl mariadb vim wget which"
 neutron-DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived mariadb openvswitch uuid vim wget which"
-DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived liberasurecode libvirt0 libxml2 mariadb memcached openvswitch rsync supervisor uuid vim wget which"
+nova-DIST_PACKAGES="curl libvirt libxml2 mariadb openvswitch uuid vim wget which"
+DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived liberasurecode libvirt libxml2 mariadb memcached openvswitch rsync supervisor uuid vim wget which"
 PIP_PACKAGES="python-openstackclient python-swiftclient"
 EMPTY:=
 
@@ -80,13 +81,13 @@ swift-storage:
 LOCI_PROJECTS = locistack-requirements \
 				locistack-keystone \
 				locistack-glance \
-				locistack-neutron
-#				loci-nova \
-#				loci-cinder \
-#				loci-heat \
-#				loci-horizon \
-#				loci-ironic \
-#				loci-swift \
+				locistack-neutron \
+				locistack-nova
+#				locistack-cinder \
+#				locistack-heat \
+#				locistack-horizon \
+#				locistack-ironic \
+#				locistack-swift \
 
 locistack-build-base:
 	rm -rf /tmp/loci

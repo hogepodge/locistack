@@ -122,166 +122,98 @@ services:
             - './tls:/tls'
         command: '/scripts/neutron/start-neutron-server.sh'
 
-#
-#    neutron-linuxbridge-agent:
-#        build: 'docker/neutron/.'
-#        env_file: './config'
-#        hostname: 'neutron-linuxbridge-agent'
-#        privileged: true
-#        network_mode: 'host'
-#        cap_add:
-#            - ALL
-#        sysctls:
-#            net.ipv4.conf.all.promote_secondaries: 1
-#            net.ipv4.ip_forward: 1
-#            net.ipv4.conf.all.rp_filter: 0
-#            net.ipv4.conf.default.rp_filter: 0
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'neutron-server'
-#        command: '/start-neutron-linuxbridge-agent.sh'
-#
-#    neutron-dhcp-agent:
-#        build: 'docker/neutron/.'
-#        env_file: './config'
-#        hostname: 'neutron-dhcp-agent'
-#        privileged: true
-#        network_mode: 'host'
-#        cap_add:
-#            - 'ALL'
-#            - 'NET_ADMIN'
-#        sysctls:
-#            net.ipv4.conf.all.promote_secondaries: 1
-#            net.ipv4.ip_forward: 1
-#            net.ipv4.conf.all.rp_filter: 0
-#            net.ipv4.conf.default.rp_filter: 0
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'neutron-server'
-#        command: '/start-neutron-dhcp-agent.sh'
-#
-#    neutron-metadata-agent:
-#        build: 'docker/neutron/.'
-#        env_file: './config'
-#        hostname: 'neutron-metadata-agent'
-#        privileged: true
-#        network_mode: 'host'
-#        cap_add:
-#            - 'NET_ADMIN'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'neutron-server'
-#        command: '/start-neutron-metadata-agent.sh'
-#
-#    ironic-api:
-#        build: 'docker/ironic/.'
-#        env_file: './config'
-#        hostname: 'ironic-api'
-#        extra_hosts:
-#            - "control:192.168.1.6"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        ports:
-#            - '6385:6385'
-#        expose:
-#            - '6385'
-#        volumes:
-#            - 'ironic-imagedata-volume:/imagedata'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'neutron-server'
-#            - 'glance-api'
-#            - 'swift-proxy'
-#        command: '/start-ironic-api.sh'
-#
-#    ironic-conductor:
-#        build: 'docker/ironic/.'
-#        env_file: './config'
-#        hostname: 'ironic-conductor'
-#        volumes:
-#            - 'ironic-imagedata-volume:/imagedata'
-#            - '/dev:/dev:rw'
-#        privileged: true 
-#        network_mode: 'host'
-#        ports:
-#            - '3260:3260'
-#        expose:
-#            - '3260'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'ironic-api'
-#        command: '/start-ironic-conductor.sh'
-#
-#    ironic-tftp:
-#        build: 'docker/ironic/.'
-#        env_file: './config'
-#        hostname: 'ironic-tftp'
-#        ports:
-#            - '69:69/udp'
-#            - '69:69'
-#        expose:
-#            - '69'
-#            - '69/udp'
-#        volumes:
-#            - 'ironic-imagedata-volume:/imagedata'
-#        command: '/start-ironic-tftp.sh'
-#
-#    ironic-nginx:
-#        build: 'docker/ironic/.'
-#        env_file: './config'
-#        hostname: 'ironic-nginx'
-#        extra_hosts:
-#            - 'control:192.168.1.6'
-#        ports: 
-#            - '8080:8080'
-#        expose:
-#            - '8080'
-#        volumes:
-#            - 'ironic-imagedata-volume:/imagedata'
-#        command: '/start-ironic-nginx.sh'
-#
-#    ironic-iscsi:
-#        build: 'docker/ironic/.'
-#        env_file: './config'
-#        hostname: 'ironic-iscsi'
-#        privileged: true
-#        network_mode: 'host'
-#        volumes:
-#            - '/dev/disk:/dev/disk'
-#        command: '/start-ironic-iscsid.sh'
-#
-#    nova-api:
-#        build: 'docker/nova/.'
-#        env_file: './config'
-#        hostname: 'nova-api'
-#        extra_hosts:
-#            - "control:192.168.1.6"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        ports:
-#            - '8774:8774'
-#            - '8775:8775'
-#        expose:
-#            - '8774'
-#            - '8775'
-#        command: '/start-nova-api.sh'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'ironic-api'
-#
+
+    neutron-linuxbridge-agent:
+        image: 'hogepodge/locistack-neutron:master-centos'
+        env_file: './config'
+        hostname: 'neutron-linuxbridge-agent'
+        privileged: true
+        network_mode: 'host'
+        cap_add:
+            - ALL
+        sysctls:
+            net.ipv4.conf.all.promote_secondaries: 1
+            net.ipv4.ip_forward: 1
+            net.ipv4.conf.all.rp_filter: 0
+            net.ipv4.conf.default.rp_filter: 0
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'neutron-server'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/neutron:/scripts/neutron'
+            - './tls:/tls'
+        command: '/scripts/neutron/start-neutron-linuxbridge-agent.sh'
+
+    neutron-dhcp-agent:
+        image: 'hogepodge/locistack-neutron:master-centos'
+        env_file: './config'
+        hostname: 'neutron-dhcp-agent'
+        privileged: true
+        network_mode: 'host'
+        cap_add:
+            - 'ALL'
+            - 'NET_ADMIN'
+        sysctls:
+            net.ipv4.conf.all.promote_secondaries: 1
+            net.ipv4.ip_forward: 1
+            net.ipv4.conf.all.rp_filter: 0
+            net.ipv4.conf.default.rp_filter: 0
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'neutron-server'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/neutron:/scripts/neutron'
+            - './tls:/tls'
+        command: '/scripts/neutron/start-neutron-dhcp-agent.sh'
+
+    neutron-metadata-agent:
+        image: 'hogepodge/locistack-neutron:master-centos'
+        env_file: './config'
+        hostname: 'neutron-metadata-agent'
+        privileged: true
+        network_mode: 'host'
+        cap_add:
+            - 'NET_ADMIN'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'neutron-server'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/neutron:/scripts/neutron'
+            - './tls:/tls'
+        command: '/scripts/neutron/start-neutron-metadata-agent.sh'
+
+    nova-api:
+        image: 'hogepodge/locistack-nova:master-centos'
+        env_file: './config'
+        hostname: 'nova-api'
+        extra_hosts:
+            - "control:192.168.1.32"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '8774:8774'
+        expose:
+            - '8774'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+            - './tls:/tls'
+        command: '/scripts/nova/start-nova-api.sh'
+
 #    nova-placement:
 #        build: 'docker/nova/.'
 #        env_file: './config'

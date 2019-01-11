@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 SERVICE_NAME=neutron
 SERVICE_TYPE=network

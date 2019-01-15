@@ -214,6 +214,29 @@ services:
             - './tls:/tls'
         command: '/scripts/nova/start-nova-api.sh'
 
+    nova-metadata:
+        image: 'hogepodge/locistack-nova:master-centos'
+        env_file: './config'
+        hostname: 'nova-api'
+        extra_hosts:
+            - "control:192.168.1.32"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '8775:8775'
+        expose:
+            - '8775'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+            - './tls:/tls'
+        command: '/scripts/nova/start-nova-api.sh'
+
     nova-placement:
         image: 'hogepodge/locistack-nova:master-centos'
         env_file: './config'
@@ -252,6 +275,10 @@ services:
             - 'rabbitmq'
             - 'keystone-api'
             - 'nova-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+            - './tls:/tls'
         command: '/scripts/nova/start-nova-conductor.sh'
 
     nova-scheduler:

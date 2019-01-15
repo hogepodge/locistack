@@ -1,7 +1,7 @@
 #!/bin/bash
 source /scripts/common/adminrc
 
-OPENSTACK=openstack --insecure
+OPENSTACK="openstack --insecure"
 
 # Both of these commands are safe to run multiple times (idempotent)
 # In the instance where the resources don't exist, they will be

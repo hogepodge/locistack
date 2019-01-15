@@ -1,9 +1,12 @@
 #!/bin/bash
 set -x
 
-/scripts/nova/initialize-keystone.sh
 /scripts/nova/generate-configs.sh
-/scripts/nova/initialize-nova-database.sh
+
+until $(curl --output /dev/null --silent --head --insecure https://${CONTROL_HOST_IP}:8774); do
+    printf 'wait on Nova API'
+    sleep 5
+done
 
 uwsgi --uid 42424 \
       --gid 42424 \

@@ -214,67 +214,72 @@ services:
             - './tls:/tls'
         command: '/scripts/nova/start-nova-api.sh'
 
-#    nova-placement:
-#        build: 'docker/nova/.'
-#        env_file: './config'
-#        hostname: 'nova-placement'
-#        extra_hosts:
-#            - "control:192.168.1.6"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        ports:
-#            - '8778:8000'
-#        expose:
-#            - '8000'
-#        command: '/start-nova-placement.sh'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'ironic-api'
-#            - 'nova-api'
-#
-#    nova-conductor:
-#        build: 'docker/nova/.'
-#        env_file: './config'
-#        hostname: 'nova-conductor'
-#        extra_hosts:
-#            - "control:192.168.1.6"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        command: '/start-nova-conductor.sh'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'ironic-api'
-#            - 'nova-api'
-#
-#    nova-scheduler:
-#        build: 'docker/nova/.'
-#        env_file: './config'
-#        hostname: 'nova-scheduler'
-#        extra_hosts:
-#            - "control:192.168.1.6"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        command: '/start-nova-scheduler.sh'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'ironic-api'
-#            - 'nova-api'
-#
+    nova-placement:
+        image: 'hogepodge/locistack-nova:master-centos'
+        env_file: './config'
+        hostname: 'nova-placement'
+        extra_hosts:
+            - "control:192.168.1.32"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '8778:8000'
+        expose:
+            - '8000'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'nova-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+            - './tls:/tls'
+        command: '/scripts/nova/start-nova-placement.sh'
+
+    nova-conductor:
+        image: 'hogepodge/locistack-nova:master-centos'
+        env_file: './config'
+        hostname: 'nova-conductor'
+        extra_hosts:
+            - "control:192.168.1.32"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'nova-api'
+        command: '/scripts/nova/start-nova-conductor.sh'
+
+    nova-scheduler:
+        image: 'hogepodge/locistack-nova:master-centos'
+        env_file: './config'
+        hostname: 'nova-scheduler'
+        extra_hosts:
+            - "control:192.168.1.32"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'nova-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+            - './tls:/tls'
+        command: '/scripts/nova/start-nova-scheduler.sh'
+
 #    nova-compute:
 #        build: 'docker/nova/.'
 #        env_file: './config'
 #        hostname: 'nova-compute'
 #        extra_hosts:
-#            - "control:192.168.1.6"
+#            - "control:192.168.1.32"
 #        links:
 #            - 'mariadb'
 #            - 'rabbitmq'
@@ -283,12 +288,5 @@ services:
 #            - 'mariadb'
 #            - 'rabbitmq'
 #            - 'keystone-api'
-#            - 'ironic-api'
 #            - 'nova-api'
 #
-#networks:
-#    swiftnet:
-#        driver: bridge
-#        ipam:
-#            config:
-#                - subnet: 172.16.16.0/24

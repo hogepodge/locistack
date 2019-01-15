@@ -7,5 +7,5 @@ set -x
 
 uwsgi --uid 42424 \
       --gid 42424 \
-      --https :8774,/tls/openstack.crt,/tls/openstack.key \
-      --wsgi-file /var/lib/openstack/bin/nova-api-wsgi
+      --https :8775,/tls/openstack.crt,/tls/openstack.key \
+      --wsgi-file /var/lib/openstack/bin/nova-metadata-wsgi

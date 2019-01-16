@@ -17,6 +17,7 @@ PIP_PACKAGES="python-openstackclient python-swiftclient"
 EMPTY:=
 
 BUILD = docker build
+RUN = docker run --rm -it
 PUSH = docker push $(DOCKERHUB_NAMESPACE)
 
 DOCSTRING="build: builds all Loci containers\
@@ -118,15 +119,14 @@ locistack-libvirt:
 	$(BUILD) docker/libvirt \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
 
+locistack-openstack:
+	$(BUILD) docker/openstack \
+		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+
 locistack: locistack-build-base $(LOCI_PROJECTS)
 
-#### OpenStack Client
-# Build the OpenStack Client
-#
-# make openstack-client
-####
+openstack-client: locistack-openstack
+	$(RUN) -v ${CURDIR}/scripts/common:/scripts/common \
+		--env-file config \
+		$(DOCKERHUB_NAMESPACE)/locistack-openstack:master-centos bash
 
-openstack-client:
-	$(BUILD) service-containers/openstack-client/. \
-		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
-#	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)

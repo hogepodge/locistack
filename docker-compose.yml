@@ -309,12 +309,12 @@ services:
         ipc: 'host'
         user: 'root'
         volumes:
-            - /:/host 
-            - /sys:/host-sys 
-            - /dev:/host-dev 
-            - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
-            - /var/run/libvirt:/var/run/libvirt 
-        command: /start-libvirt.sh
+            - '/:/host'
+            - '/sys:/host-sys'
+            - '/dev:/host-dev'
+            - '/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket'
+            - '/var/run/libvirt:/var/run/libvirt'
+        command: '/start-libvirt.sh'
 
     nova-compute:
         image: 'hogepodge/locistack-nova:master-centos'
@@ -329,6 +329,8 @@ services:
             - './scripts/common:/scripts/common'
             - './scripts/nova:/scripts/nova'
             - './tls:/tls'
+            - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+            - /var/run/libvirt:/var/run/libvirt 
         depends_on:
             - 'mariadb'
             - 'rabbitmq'

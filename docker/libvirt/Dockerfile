@@ -1,8 +1,11 @@
-FROM centos
+FROM hogepodge/locistack-base:centos
 
 MAINTAINER "Chris Hoge" <chris@openstack.org>
 
 RUN yum update -y \
+  && yum install -y \
+         centos-release-qemu-ev \
+  && yum update -y \
   && yum install -y \
          augeas \
          libvirt-client \

@@ -114,6 +114,10 @@ locistack-requirements:
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO) --no-cache
 	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
 
+locistack-libvirt:
+	$(BUILD) docker/libvirt \
+		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+
 locistack: locistack-build-base $(LOCI_PROJECTS)
 
 #### OpenStack Client

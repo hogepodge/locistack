@@ -21,7 +21,7 @@ scheduler_tracks_instance_changes = False
 osapi_compute_workers = 1
 metadata_workers = 1
 
-compute_driver = ironic.IronicDriver
+compute_driver = libvirt.LibvirtDriver
 api_paste_config = /etc/nova/api-paste.ini
 
 # instance_name_template=baremetal-%08x

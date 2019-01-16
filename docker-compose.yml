@@ -301,19 +301,38 @@ services:
             - './tls:/tls'
         command: '/scripts/nova/start-nova-scheduler.sh'
 
-#    nova-compute:
-#        build: 'docker/nova/.'
-#        env_file: './config'
-#        hostname: 'nova-compute'
-#        extra_hosts:
-#            - "control:192.168.1.32"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        command: '/start-nova-compute.sh'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'nova-api'
-#
+    libvirt:
+        image: 'hogepodge/locistack-libvirt:master-centos'
+        privileged: 'true'
+        network_mode: 'host'
+        pid: 'host'
+        ipc: 'host'
+        user: 'root'
+        volumes:
+            - /:/host 
+            - /sys:/host-sys 
+            - /dev:/host-dev 
+            - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+            - /var/run/libvirt:/var/run/libvirt 
+        command: /start-libvirt.sh
+
+    nova-compute:
+        image: 'hogepodge/locistack-nova:master-centos'
+        env_file: './config'
+        hostname: 'nova-compute'
+        extra_hosts:
+            - "control:192.168.1.32"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+            - './tls:/tls'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'nova-api'
+        command: '/scripts/nova/start-nova-compute.sh'
+

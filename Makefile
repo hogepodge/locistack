@@ -127,6 +127,7 @@ locistack: locistack-build-base $(LOCI_PROJECTS)
 
 openstack-client: locistack-openstack
 	$(RUN) -v ${CURDIR}/scripts/common:/scripts/common \
+		-v ${CURDIR}/scripts/client:/scripts/client \
 		--env-file config \
 		$(DOCKERHUB_NAMESPACE)/locistack-openstack:master-centos bash
 

@@ -235,7 +235,7 @@ services:
             - './scripts/common:/scripts/common'
             - './scripts/nova:/scripts/nova'
             - './tls:/tls'
-        command: '/scripts/nova/start-nova-api.sh'
+        command: '/scripts/nova/start-nova-metadata.sh'
 
     nova-placement:
         image: 'hogepodge/locistack-nova:master-centos'

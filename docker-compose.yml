@@ -72,7 +72,7 @@ services:
             - './scripts/common:/scripts/common'
             - './scripts/glance:/scripts/glance'
             - './tls:/tls'
-            - 'glance-images:/images'
+            - '/dev/loop0:/dev/loop0'
         command: '/scripts/glance/start-glance-api.sh'
 
     glance-registry:

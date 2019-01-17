@@ -60,18 +60,18 @@ kernel-modules:
 	sudo sysctl net.bridge.bridge-nf-call-iptables=1
 	sudo sysctl net.bridge.bridge-nf-call-ip6tables=1
 
-##### Swift Storage Directory
-# Make the loopback device to hold swift storage data
+##### Glance Storage Directory
+# Make the loopback device to hold glance storage data
 #
 # Assumption is that loop0 is the device this lands on
 #
-# make swift-storage 
+# make glance-storage 
 ####
 
-swift-storage:
-	truncate -s 50G swift-storage
-	mkfs.xfs swift-storage
-	sudo losetup --show -f swift-storage
+glance-storage:
+	truncate -s 50G glance-storage
+	mkfs.xfs glance-storage
+	sudo losetup --show -f glance-storage
 
 ##### Loci Containers
 # Building the Loci packages and push them to Docker Hub.

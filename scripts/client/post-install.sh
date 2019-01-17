@@ -38,62 +38,84 @@ if [[ "${OS_USERNAME}" == "" ]]; then
     exit
 fi
 
-# Test to ensure configure script is run only once
-if ${OPENSTACK} image list | grep -q cirros; then
-    echo "This tool should only be run once per deployment."
-    exit
+
+# Upload Cirros if it isn't already available
+echo "Test for the image cirros"
+${OPENSTACK} image list | grep -q cirros
+if [ $? -eq 1 ]; then
+    echo "The image cirros does not exist. Creating."
+
+    echo "Downloading Cirros image"
+    if ! [ -f "${IMAGE}" ]; then
+        curl -L -o ./${IMAGE} ${IMAGE_URL}/${IMAGE}
+    fi
+
+    EXTRA_PROPERTIES=
+    if [ ${ARCH} == aarch64 ]; then
+        EXTRA_PROPERTIES="--property hw_firmware_type=uefi"
+    fi
+
+    echo "Uploading Cirros image to Glance"
+    ${OPENSTACK} image create --disk-format qcow2 --container-format bare --public \
+        --property os_type=${IMAGE_TYPE} ${EXTRA_PROPERTIES} --file ./${IMAGE} ${IMAGE_NAME}
 fi
 
-echo Downloading glance image.
-if ! [ -f "${IMAGE}" ]; then
-    curl -L -o ./${IMAGE} ${IMAGE_URL}/${IMAGE}
+
+echo "Test for the network demo-net"
+${OPENSTACK} network list | grep -q demo-net
+if [ $? -eq 1 ]; then
+    echo "The network demo-net does not exist. Creating."
+    ${OPENSTACK} network create --provider-network-type vxlan demo-net
 fi
 
-EXTRA_PROPERTIES=
-if [ ${ARCH} == aarch64 ]; then
-    EXTRA_PROPERTIES="--property hw_firmware_type=uefi"
+echo "Test for the subnet demo-subnet"
+${OPENSTACK} subnet list | grep -q demo-subnet
+if [ $? -eq 1 ]; then
+    echo "The subnet demo-subnet does not exist. Creating."
+    ${OPENSTACK} subnet create --subnet-range 10.0.0.0/24 --network demo-net \
+        --gateway 10.0.0.1 --dns-nameserver 8.8.8.8 demo-subnet
 fi
 
-echo Creating glance image.
-${OPENSTACK} image create --disk-format qcow2 --container-format bare --public \
-    --property os_type=${IMAGE_TYPE} ${EXTRA_PROPERTIES} --file ./${IMAGE} ${IMAGE_NAME}
-
-${OPENSTACK} network create --provider-network-type vxlan demo-net
-${OPENSTACK} subnet create --subnet-range 10.0.0.0/24 --network demo-net \
-    --gateway 10.0.0.1 --dns-nameserver 8.8.8.8 demo-subnet
-
-${OPENSTACK} router create demo-router
-${OPENSTACK} router add subnet demo-router demo-subnet
-${OPENSTACK} router set --external-gateway public1 demo-router
+echo "Test for the router demo-router"
+${OPENSTACK} router list | grep -q demo-router
+if [ $? -eq 1 ]; then
+    echo "The router demo-router does not exist. Creating."
+    ${OPENSTACK} router create demo-router
+    ${OPENSTACK} router add subnet demo-router demo-subnet
+    ${OPENSTACK} router set --external-gateway provider demo-router
+fi
 
 # Get admin user and tenant IDs
+echo "Getting the user/tenant tuple for the admin user"
 ADMIN_USER_ID=$(${OPENSTACK} user list | awk '/ admin / {print $2}')
 ADMIN_PROJECT_ID=$(${OPENSTACK} project list | awk '/ admin / {print $2}')
+
+echo "Getting the default security group."
 ADMIN_SEC_GROUP=$(${OPENSTACK} security group list --project ${ADMIN_PROJECT_ID} | awk '/ default / {print $2}')
 
-i# Sec Group Config
+# Sec Group Config
 ${OPENSTACK} security group rule create --ingress --ethertype IPv4 \
     --protocol icmp ${ADMIN_SEC_GROUP}
 ${OPENSTACK} security group rule create --ingress --ethertype IPv4 \
-    --protocol tcp --dst-port 22 ${ADMIN_SEC_GROUP}
+   --protocol tcp --dst-port 22 ${ADMIN_SEC_GROUP}
 # Open heat-cfn so it can run on a different host
 ${OPENSTACK} security group rule create --ingress --ethertype IPv4 \
     --protocol tcp --dst-port 8000 ${ADMIN_SEC_GROUP}
 ${OPENSTACK} security group rule create --ingress --ethertype IPv4 \
     --protocol tcp --dst-port 8080 ${ADMIN_SEC_GROUP}
 
-if [ ! -f ~/.ssh/id_rsa.pub ]; then
-    echo Generating ssh key.
-    ssh-keygen -t rsa -f ~/.ssh/id_rsa
-fi
-if [ -r ~/.ssh/id_rsa.pub ]; then
-    echo Configuring nova public key and quotas.
-    ${OPENSTACK} keypair create --public-key ~/.ssh/id_rsa.pub mykey
-fi
-
-# Increase the quota to allow 40 m1.small instances to be created
-
-# 40 instances
+##if [ ! -f ~/.ssh/id_rsa.pub ]; then
+##    echo Generating ssh key.
+##    ssh-keygen -t rsa -f ~/.ssh/id_rsa
+##fi
+#if [ -r ~/.ssh/id_rsa.pub ]; then
+#    echo Configuring nova public key and quotas.
+#    ${OPENSTACK} keypair create --public-key ~/.ssh/id_rsa.pub mykey
+#fi
+#
+## Increase the quota to allow 40 m1.small instances to be created
+#
+## 40 instances
 ${OPENSTACK} quota set --instances 40 ${ADMIN_PROJECT_ID}
 
 # 40 cores
@@ -102,12 +124,21 @@ ${OPENSTACK} quota set --cores 40 ${ADMIN_PROJECT_ID}
 # 96GB ram
 ${OPENSTACK} quota set --ram 96000 ${ADMIN_PROJECT_ID}
 
-# add default flavors, if they don't already exist
+
+echo "Adding the default flavors if they don't already exist."
 if ! ${OPENSTACK} flavor list | grep -q m1.tiny; then
     ${OPENSTACK} flavor create --id 1 --ram 512 --disk 1 --vcpus 1 m1.tiny
+fi
+if ! ${OPENSTACK} flavor list | grep -q m1.small; then
     ${OPENSTACK} flavor create --id 2 --ram 2048 --disk 20 --vcpus 1 m1.small
+fi
+if ! ${OPENSTACK} flavor list | grep -q m1.medium; then
     ${OPENSTACK} flavor create --id 3 --ram 4096 --disk 40 --vcpus 2 m1.medium
+fi
+if ! ${OPENSTACK} flavor list | grep -q m1.large; then
     ${OPENSTACK} flavor create --id 4 --ram 8192 --disk 80 --vcpus 4 m1.large
+fi
+if ! ${OPENSTACK} flavor list | grep -q m1.xlarge; then
     ${OPENSTACK} flavor create --id 5 --ram 16384 --disk 160 --vcpus 6 m1.xlarge
 fi
 

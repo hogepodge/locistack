@@ -64,6 +64,7 @@ insecure = true
 [glance]
 
 api_servers = https://${CONTROL_HOST_IP}:9292
+api_insecure = true
 
 [database]
 

@@ -71,6 +71,8 @@ kernel-modules:
 glance-storage:
 	truncate -s 50G glance-storage
 	mkfs.xfs glance-storage
+
+mount-glance-storage: glance-storage
 	sudo losetup --show -f glance-storage
 
 ##### Loci Containers

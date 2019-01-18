@@ -318,6 +318,7 @@ services:
 
     nova-compute:
         image: 'hogepodge/locistack-nova:master-centos'
+        privileged: 'true'
         env_file: './config'
         hostname: 'nova-compute'
         extra_hosts:

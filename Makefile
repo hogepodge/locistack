@@ -59,6 +59,7 @@ kernel-modules:
 	sudo modprobe br_netfilter
 	sudo sysctl net.bridge.bridge-nf-call-iptables=1
 	sudo sysctl net.bridge.bridge-nf-call-ip6tables=1
+	sudo setenforce Permissive
 
 ##### Glance Storage Directory
 # Make the loopback device to hold glance storage data
@@ -73,7 +74,7 @@ glance-storage:
 	mkfs.xfs glance-storage
 
 mount-glance-storage: glance-storage
-	sudo losetup --show -f glance-storage
+	sudo losetup /dev/loop0 glance-storage
 
 ##### Loci Containers
 # Building the Loci packages and push them to Docker Hub.
@@ -133,3 +134,15 @@ openstack-client: locistack-openstack
 		--env-file config \
 		$(DOCKERHUB_NAMESPACE)/locistack-openstack:master-centos bash
 
+
+up: mount-glance-storage kernel-modules
+	docker-compose up -d
+
+down:
+	docker-compose down
+
+down-v:
+	docker-compose down -v
+
+logs:
+	docker-compose logs -f

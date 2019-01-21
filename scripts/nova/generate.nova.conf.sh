@@ -121,4 +121,10 @@ insecure = true
 
 workers = 1
 
+[libvirt]
+virt_type = qemu
+#cpu_mode = host-passthrough
+#connection_uri = qemu+tcp://127.0.0.1/system
+connection_uri = qemu+tcp://${CONTROL_HOST_IP}/system
+
 EOF

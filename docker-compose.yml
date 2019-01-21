@@ -3,6 +3,7 @@ version: '2.2'
 volumes:
     mariadb-volume:
     glance-images:
+    nova-images:
 
 services:
     mariadb:
@@ -55,6 +56,7 @@ services:
         image: 'hogepodge/locistack-glance:master-centos'
         env_file: './config'
         hostname: 'glance-api'
+        privileged: true
         extra_hosts:
             - "control:192.168.1.32"
         links:
@@ -309,11 +311,14 @@ services:
         ipc: 'host'
         user: 'root'
         volumes:
-            - '/:/host'
-            - '/sys:/host-sys'
-            - '/dev:/host-dev'
+            - '/etc/localtime:/etc/localtime'
+            - '/lib/modules:/lib/modules'
+            - '/run/:/run/'
+            - '/dev:/dev'
+            - '/sys/fs/cgroup:/sys/fs/cgroup'
             - '/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket'
             - '/var/run/libvirt:/var/run/libvirt'
+            - '/var/lib/nova:/var/lib/nova'
         command: '/start-libvirt.sh'
 
     nova-compute:
@@ -330,8 +335,8 @@ services:
             - './scripts/common:/scripts/common'
             - './scripts/nova:/scripts/nova'
             - './tls:/tls'
-            - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
-            - /var/run/libvirt:/var/run/libvirt 
+            - '/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket'
+            - '/var/lib/nova:/var/lib/nova'
         depends_on:
             - 'mariadb'
             - 'rabbitmq'

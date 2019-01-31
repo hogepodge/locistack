@@ -3,6 +3,40 @@
 #
 ####
 
+##### Kernel Modules
+# Load kernel modules necessary for Cinder and Neutron
+#
+# make kernel-modules
+#####
+
+kernel-modules:
+	sudo modprobe iscsi_tcp
+	sudo modprobe ip6_tables
+	sudo modprobe ebtables
+	sudo modprobe ip_conntrack
+	sudo modprobe ip_conntrack_ftp
+	sudo modprobe ip_nat_ftp
+	sudo modprobe br_netfilter
+	sudo sysctl net.bridge.bridge-nf-call-iptables=1
+	sudo sysctl net.bridge.bridge-nf-call-ip6tables=1
+	sudo setenforce Permissive
+
+##### Glance Storage Directory
+# Make the loopback device to hold glance storage data
+#
+# Assumption is that loop0 is the device this lands on
+#
+# make glance-storage 
+####
+
+glance-storage:
+	truncate -s 50G glance-storage
+	mkfs.xfs glance-storage
+
+mount-glance-storage: glance-storage
+	sudo losetup /dev/loop0 glance-storage
+
+
 OPENSTACK_RELEASE=master
 #STABLE=stable/
 DOCKERHUB_NAMESPACE=hogepodge
@@ -42,39 +76,6 @@ tls/openstack.csr: tls tls/openstack.key
 
 tls/openstack.crt: tls tls/openstack.key tls/openstack.csr
 	cd tls &&openssl x509 -req -days 365 -in openstack.csr -signkey openstack.key -out openstack.crt
-
-##### Kernel Modules
-# Load kernel modules necessary for Cinder and Neutron
-#
-# make kernel-modules
-#####
-
-kernel-modules:
-	sudo modprobe iscsi_tcp
-	sudo modprobe ip6_tables
-	sudo modprobe ebtables
-	sudo modprobe ip_conntrack
-	sudo modprobe ip_conntrack_ftp
-	sudo modprobe ip_nat_ftp
-	sudo modprobe br_netfilter
-	sudo sysctl net.bridge.bridge-nf-call-iptables=1
-	sudo sysctl net.bridge.bridge-nf-call-ip6tables=1
-	sudo setenforce Permissive
-
-##### Glance Storage Directory
-# Make the loopback device to hold glance storage data
-#
-# Assumption is that loop0 is the device this lands on
-#
-# make glance-storage 
-####
-
-glance-storage:
-	truncate -s 50G glance-storage
-	mkfs.xfs glance-storage
-
-mount-glance-storage: glance-storage
-	sudo losetup /dev/loop0 glance-storage
 
 ##### Loci Containers
 # Building the Loci packages and push them to Docker Hub.

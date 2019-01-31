@@ -193,6 +193,25 @@ services:
             - './tls:/tls'
         command: '/scripts/neutron/start-neutron-metadata-agent.sh'
 
+    neutron-l3-agent:
+        image: 'hogepodge/locistack-neutron:master-centos'
+        env_file: './config'
+        hostname: 'neutron-l3-agent'
+        privileged: true
+        network_mode: 'host'
+        cap_add:
+            - 'NET_ADMIN'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'neutron-server'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/neutron:/scripts/neutron'
+            - './tls:/tls'
+        command: '/scripts/neutron/start-neutron-l3-agent.sh'
+
     nova-api:
         image: 'hogepodge/locistack-nova:master-centos'
         env_file: './config'

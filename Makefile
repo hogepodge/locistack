@@ -133,6 +133,7 @@ locistack: locistack-build-base $(LOCI_PROJECTS)
 openstack-client: locistack-openstack
 	$(RUN) -v ${CURDIR}/scripts/common:/scripts/common \
 		-v ${CURDIR}/scripts/client:/scripts/client \
+		-v ${CURDIR}/scripts/post-install:/scripts/post-install \
 		--env-file config \
 		$(DOCKERHUB_NAMESPACE)/locistack-openstack:$(OPENSTACK_RELEASE)-$(DISTRO) bash
 

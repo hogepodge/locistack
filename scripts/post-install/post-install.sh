@@ -19,7 +19,6 @@ function wait_for_it() {
   until $(curl --output /dev/null \
                --silent \
 	       --head \
-	       --fail \
 	       ${PROTOCOL}://${HOST}:${PORT}); do
     printf 'Waiting on ${SERVICE}.'
     sleep 5
@@ -28,10 +27,10 @@ function wait_for_it() {
 }
 
 
-wait_for_it ${CONTROL_HOST_IP} 5000 '--insecure https' 'Keystone'
-wait_for_it ${CONTROL_HOST_IP} 9292 '--insecure https' 'Glance'
+wait_for_it ${CONTROL_HOST_IP} 5000 '--fail --insecure https' 'Keystone'
+wait_for_it ${CONTROL_HOST_IP} 9292 '--fail --insecure https' 'Glance'
 wait_for_it ${CONTROL_HOST_IP} 9696 'http'  'Neutron'
-wait_for_it ${CONTROL_HOST_IP} 8774 '--insecure https' 'Nova'
+wait_for_it ${CONTROL_HOST_IP} 8774 '--fail --insecure https' 'Nova'
 
 OPENSTACK="openstack --insecure"
 
@@ -89,7 +88,7 @@ fi
 
 echo "Test for the network provider"
 ${OPENSTACK} network list | grep -q provider
-if [ $? -eq $1 ]; then
+if [ $? -eq 1 ]; then
     echo "The network provider does not exist. Creating."
 
     ${OPENSTACK} network create --share \
@@ -101,7 +100,7 @@ fi
 
 echo "Test for the subnet provider"
 ${OPENSTACK} network list | grep -q provider
-if [ $? -eq $1 ]; then
+if [ $? -eq 1 ]; then
     echo "The subnet provider does not exist. Creating."
 
     # It's assumed that this provider network has an existing dhcp server

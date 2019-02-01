@@ -20,10 +20,10 @@ function wait_for_it() {
                --silent \
 	       --head \
 	       ${PROTOCOL}://${HOST}:${PORT}); do
-    printf 'Waiting on ${SERVICE}.'
+    printf "Waiting on ${SERVICE}."
     sleep 5
   done
-  print '${SERVICE} available.'
+  printf "${SERVICE} available."
 }
 
 
@@ -32,7 +32,7 @@ wait_for_it ${CONTROL_HOST_IP} 9292 '--fail --insecure https' 'Glance'
 wait_for_it ${CONTROL_HOST_IP} 9696 'http'  'Neutron'
 wait_for_it ${CONTROL_HOST_IP} 8774 '--fail --insecure https' 'Nova'
 
-OPENSTACK="openstack --insecure"
+OPENSTACK='openstack --insecure'
 
 ARCH=$(uname -m)
 IMAGE_URL=http://download.cirros-cloud.net/0.4.0/

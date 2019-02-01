@@ -1,10 +1,4 @@
-========================
-Team and repository tags
-========================
-
-.. image:: https://governance.openstack.org/tc/badges/loci.svg
-
-.. Change things from this point on
+.. image:: loci.jpg
 
 Locistack
 =========

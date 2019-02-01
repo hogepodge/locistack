@@ -363,3 +363,13 @@ services:
             - 'nova-api'
         command: '/scripts/nova/start-nova-compute.sh'
 
+    post-install:
+        image: 'hogepodge/locistack-openstack:master-centos'
+        env_file: './config'
+        hostname: 'post-install'
+        extra_hosts:
+            - "control:192.168.1.32"
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/post-install:/scripts/post-install'
+        command: '/scripts/post-install/post-install.sh'

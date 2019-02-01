@@ -6,6 +6,33 @@
 # to be created.
 set -x
 
+source /scripts/common/adminrc
+
+# Wait for all services to start
+
+function wait_for_it() {
+  local HOST=$1
+  local PORT=$2
+  local PROTOCOL=$3
+  local SERVICE=$4
+
+  until $(curl --output /dev/null \
+               --silent \
+	       --head \
+	       --fail \
+	       ${PROTOCOL}://${HOST}:${PORT}); do
+    printf 'Waiting on ${SERVICE}.'
+    sleep 5
+  done
+  print '${SERVICE} available.'
+}
+
+
+wait_for_it ${CONTROL_HOST_IP} 5000 '--insecure https' 'Keystone'
+wait_for_it ${CONTROL_HOST_IP} 9292 '--insecure https' 'Glance'
+wait_for_it ${CONTROL_HOST_IP} 9696 'http'  'Neutron'
+wait_for_it ${CONTROL_HOST_IP} 8774 '--insecure https' 'Nova'
+
 OPENSTACK="openstack --insecure"
 
 ARCH=$(uname -m)
@@ -60,6 +87,32 @@ if [ $? -eq 1 ]; then
         --property os_type=${IMAGE_TYPE} ${EXTRA_PROPERTIES} --file ./${IMAGE} ${IMAGE_NAME}
 fi
 
+echo "Test for the network provider"
+${OPENSTACK} network list | grep -q provider
+if [ $? -eq $1 ]; then
+    echo "The network provider does not exist. Creating."
+
+    ${OPENSTACK} network create --share \
+                                --external \
+                                --provider-physical-network provider \
+                                --provider-network-type flat \
+                                provider
+fi
+
+echo "Test for the subnet provider"
+${OPENSTACK} network list | grep -q provider
+if [ $? -eq $1 ]; then
+    echo "The subnet provider does not exist. Creating."
+
+    # It's assumed that this provider network has an existing dhcp server
+    ${OPENSTACK} subnet create --subnet-range ${PROVIDER_SUBNET} \
+                               --gateway ${PROVIDER_GATEWAY} \
+                               --network provider \
+                               --allocation-pool start=${PROVIDER_POOL_START},end=${PROVIDER_POOL_END} \
+                               --dns-nameserver ${PROVIDER_DNS_NAMESERVER} \
+                               --no-dhcp \
+                               provider
+fi
 
 echo "Test for the network demo-net"
 ${OPENSTACK} network list | grep -q demo-net
@@ -145,7 +198,8 @@ fi
 DEMO_NET_ID=$(openstack network list | awk '/ demo-net / {print $2}')
 
 cat << EOF
-Done.
+Locistack is installed and configured.
+
 To deploy a demo instance, run:
 openstack server create \\
     --image ${IMAGE_NAME} \\
@@ -154,4 +208,3 @@ openstack server create \\
     --nic net-id=${DEMO_NET_ID} \\
     demo1
 EOF
-

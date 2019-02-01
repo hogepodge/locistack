@@ -46,6 +46,7 @@ keystone-DIST_PACKAGES="curl mariadb vim wget which"
 glance-DIST_PACKAGES="curl mariadb vim wget which"
 neutron-DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived mariadb openvswitch uuid vim wget which"
 nova-DIST_PACKAGES="curl libvirt libxml2 mariadb openvswitch uuid vim wget which"
+horizon-DIST_PACKAGES="httpd curl mariadb memcached vim wget which"
 DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived liberasurecode libvirt libxml2 mariadb memcached openvswitch rsync supervisor uuid vim wget which"
 PIP_PACKAGES="python-openstackclient python-swiftclient"
 EMPTY:=
@@ -87,10 +88,10 @@ LOCI_PROJECTS = locistack-requirements \
 				locistack-keystone \
 				locistack-glance \
 				locistack-neutron \
-				locistack-nova
+				locistack-nova \
+				locistack-horizon
 #				locistack-cinder \
 #				locistack-heat \
-#				locistack-horizon \
 #				locistack-ironic \
 #				locistack-swift \
 
@@ -133,7 +134,7 @@ openstack-client: locistack-openstack
 	$(RUN) -v ${CURDIR}/scripts/common:/scripts/common \
 		-v ${CURDIR}/scripts/client:/scripts/client \
 		--env-file config \
-		$(DOCKERHUB_NAMESPACE)/locistack-openstack:master-centos bash
+		$(DOCKERHUB_NAMESPACE)/locistack-openstack:$(OPENSTACK_RELEASE)-$(DISTRO) bash
 
 
 up: mount-glance-storage kernel-modules

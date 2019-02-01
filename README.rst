@@ -1,4 +1,3 @@
-.. image:: loci.jpg
 
 Locistack
 =========
@@ -30,8 +29,9 @@ selinux permissive (yes yes I know...). You also need to create a
 permanent storage volume for glance and mount it to loopback device
 `/dev/loop0`.  Locistack provides make_ targets to do all those things.
 
-.. code:: shell
-   cd lockstack
+.. codeblock:: shell
+
+   cd locistack
    make kernel-images
    make glance-storage
    make mount-glance-storage
@@ -58,7 +58,9 @@ With that done, go ahead and try out your cloud. You can bring up an
 /scripts/common/adminrc`` when the container starts and run ``openstack``
 to interact with your cluster.
 
-Have a good time with OpenStack!
+Have a good time with OpenStack and Loci!
+
+.. image:: loci.jpg
 
 .. _OpenStack Loci: http://git.openstack.org/cgit/openstack/loci/
 .. _Docker Compose: https://docs.docker.com/compose/

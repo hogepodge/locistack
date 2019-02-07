@@ -150,11 +150,6 @@ ${OPENSTACK} security group rule create --ingress --ethertype IPv4 \
     --protocol icmp ${ADMIN_SEC_GROUP}
 ${OPENSTACK} security group rule create --ingress --ethertype IPv4 \
    --protocol tcp --dst-port 22 ${ADMIN_SEC_GROUP}
-# Open heat-cfn so it can run on a different host
-${OPENSTACK} security group rule create --ingress --ethertype IPv4 \
-    --protocol tcp --dst-port 8000 ${ADMIN_SEC_GROUP}
-${OPENSTACK} security group rule create --ingress --ethertype IPv4 \
-    --protocol tcp --dst-port 8080 ${ADMIN_SEC_GROUP}
 
 ##if [ ! -f ~/.ssh/id_rsa.pub ]; then
 ##    echo Generating ssh key.

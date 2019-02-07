@@ -1,0 +1,11 @@
+# Install Docker CE
+## Set up the repository
+### Install required packages.
+
+yum install -y yum-utils
+
+### Add docker repository.
+yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+

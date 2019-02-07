@@ -1,7 +1,7 @@
 #### Required environment variables
 # DOCKERHUB_NAMESPACE: the name of the dockerhub repository to push images to
 #
-####
+###
 
 ##### Kernel Modules
 # Load kernel modules necessary for Cinder and Neutron
@@ -134,6 +134,7 @@ openstack-client: locistack-openstack
 	$(RUN) -v ${CURDIR}/scripts/common:/scripts/common \
 		-v ${CURDIR}/scripts/client:/scripts/client \
 		-v ${CURDIR}/scripts/post-install:/scripts/post-install \
+		-v ${CURDIR}/images:/images \
 		--env-file config \
 		$(DOCKERHUB_NAMESPACE)/locistack-openstack:$(OPENSTACK_RELEASE)-$(DISTRO) bash
 

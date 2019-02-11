@@ -37,6 +37,30 @@ mount-glance-storage: glance-storage
 	sudo losetup /dev/loop0 glance-storage
 
 
+##### Cinder Storage
+lvm2:
+	sudo yum install -y lvm2
+
+thin-provisioning-tools:
+	sudo yum install -y device-mapper-persistent-data
+
+dm_thin_pool:
+	sudo modprobe dm_thin_pool
+
+cinder-requirements: thin-provisioning-tools lvm2 dm_thin_pool
+
+cinder-storage:
+	${CURDIR}/scripts/host/setup-cinder.sh
+
+# Get next available loop device
+# LD=$(sudo losetup -f)
+# sudo losetup $LD cinder-volumes.img
+# sudo sfdisk $LD &lt;&lt; EOF
+# ,,8e,,
+# EOF
+# sudo pvcreate $LD
+# sudo vgcreate cinder-volumes $LD
+
 OPENSTACK_RELEASE=master
 #STABLE=stable/
 DOCKERHUB_NAMESPACE=hogepodge
@@ -46,6 +70,7 @@ keystone-DIST_PACKAGES="curl mariadb vim wget which"
 glance-DIST_PACKAGES="curl mariadb vim wget which"
 neutron-DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived mariadb openvswitch uuid vim wget which"
 nova-DIST_PACKAGES="curl libvirt libxml2 mariadb openvswitch uuid vim wget which"
+cinder-DIST_PACKAGES="curl lvm2 mariadb targetcli thin-provisioning-tools vim wget which"
 horizon-DIST_PACKAGES="httpd curl mariadb memcached mod_wsgi vim wget which"
 DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived liberasurecode libvirt libxml2 mariadb memcached openvswitch rsync supervisor uuid vim wget which"
 PIP_PACKAGES="python-openstackclient python-swiftclient"
@@ -89,8 +114,8 @@ LOCI_PROJECTS = locistack-requirements \
 				locistack-glance \
 				locistack-neutron \
 				locistack-nova \
-				locistack-horizon
-#				locistack-cinder \
+				locistack-cinder
+#				locistack-horizon \
 #				locistack-heat \
 #				locistack-ironic \
 #				locistack-swift \

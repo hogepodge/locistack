@@ -1,13 +1,13 @@
 #!/bin/bash
 set -x
 
-SERVICE_NAME=neutron
-SERVICE_TYPE=network
-SERVICE_DESCRIPTION="OpenStack Networking Service"
+SERVICE_NAME=cinder
+SERVICE_TYPE=volume
+SERVICE_DESCRIPTION="OpenStack Volume Service"
 SERVICE_PASSWORD=${SERVICE_PASSWORD}
-PUBLIC_ENDPOINT=http://${CONTROL_HOST_IP}:9696
-PRIVATE_ENDPOINT=http://${CONTROL_HOST_PRIVATE_IP}:9696
-ADMIN_ENDPOINT=http://${CONTROL_HOST_PRIVATE_IP}:9696
+PUBLIC_ENDPOINT=https://${CONTROL_HOST_IP}:8776/v3/%\(project_id\)s
+PRIVATE_ENDPOINT=https://${CONTROL_HOST_PRIVATE_IP}:8776/v3/%\(project_id\)s
+ADMIN_ENDPOINT=https://${CONTROL_HOST_PRIVATE_IP}:8776/v3/%\(project_id\)s
 
 /scripts/common/initialize-keystone.sh "${SERVICE_NAME}" \
                                        "${SERVICE_TYPE}" \

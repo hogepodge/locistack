@@ -66,6 +66,9 @@ insecure = true
 api_servers = https://${CONTROL_HOST_IP}:9292
 api_insecure = true
 
+[cinder]
+os_region_name = RegionOne
+
 [database]
 
 connection = mysql+pymysql://nova:${MYSQL_ROOT_PASSWORD}@${CONTROL_HOST_IP}/nova

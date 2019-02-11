@@ -8,6 +8,7 @@ disk-image-create \
     dhcp-all-interfaces \
     epel \
     kubernetes \
+    vm \
     yum \
     -o centos7-k8s.qcow2 \
     -p vim

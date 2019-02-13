@@ -8,4 +8,4 @@ set -x
 uwsgi --uid 42424 \
       --gid 42424 \
       --https :8776,/tls/openstack.crt,/tls/openstack.key \
-      --wsgi-file /var/lib/openstack/bin/cinder-api-wsgi
+      --wsgi-file /var/lib/openstack/bin/cinder-wsgi

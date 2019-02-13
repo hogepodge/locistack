@@ -363,6 +363,29 @@ services:
             - 'nova-api'
         command: '/scripts/nova/start-nova-compute.sh'
 
+    cinder-api:
+        image: 'hogepodge/locistack-cinder:master-centos'
+        env_file: './config'
+        hostname: 'cinder-api'
+        extra_hosts:
+            - "control:192.168.1.32"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '8776:8776'
+        expose:
+            - '8774'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/cinder:/scripts/cinder'
+            - './tls:/tls'
+        command: '/scripts/cinder/start-cinder-api.sh'
+
     post-install:
         image: 'hogepodge/locistack-openstack:master-centos'
         env_file: './config'

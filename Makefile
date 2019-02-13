@@ -70,11 +70,12 @@ keystone-DIST_PACKAGES="curl mariadb vim wget which"
 glance-DIST_PACKAGES="curl mariadb vim wget which"
 neutron-DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived mariadb openvswitch uuid vim wget which"
 nova-DIST_PACKAGES="curl libvirt libxml2 mariadb openvswitch uuid vim wget which"
-cinder-DIST_PACKAGES="curl lvm2 mariadb targetcli thin-provisioning-tools vim wget which"
+cinder-DIST_PACKAGES="curl lvm2 mariadb targetcli device-mapper-persistent-data vim wget which"
 horizon-DIST_PACKAGES="httpd curl mariadb memcached mod_wsgi vim wget which"
 DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived liberasurecode libvirt libxml2 mariadb memcached openvswitch rsync supervisor uuid vim wget which"
 PIP_PACKAGES="python-openstackclient python-swiftclient"
 EMPTY:=
+DIST=$(subst :,$(EMPTY),$(DISTRO))
 
 BUILD = docker build
 RUN = docker run --rm -it
@@ -121,37 +122,38 @@ LOCI_PROJECTS = locistack-requirements \
 #				locistack-swift \
 
 locistack-build-base:
-	rm -rf /tmp/loci
-	git clone https://git.openstack.org/openstack/loci.git /tmp/loci
-	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/locistack-base:$(DISTRO) /tmp/loci/dockerfiles/$(DISTRO)
+#	rm -rf /tmp/loci
+#	git clone https://git.openstack.org/openstack/loci.git /tmp/loci
+	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) /tmp/loci/dockerfiles/$(DISTRO)
 #	$(PUSH)/locistack-base:$(DISTRO)
 
 $(LOCI_PROJECTS):
 	$(BUILD) /tmp/loci \
 		--build-arg PROJECT=$(subst locistack-,$(EMPTY),$@) \
 		--build-arg PROJECT_REF=$(STABLE)$(OPENSTACK_RELEASE) \
-		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-base:$(DISTRO) \
-		--build-arg WHEELS=$(DOCKERHUB_NAMESPACE)/locistack-requirements:$(OPENSTACK_RELEASE)-$(DISTRO) \
+		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) \
+		--build-arg WHEELS=$(DOCKERHUB_NAMESPACE)/locistack-requirements:$(OPENSTACK_RELEASE)-$(DIST) \
 		--build-arg DIST_PACKAGES=$($(subst locistack-,$(EMPTY),$@)-DIST_PACKAGES) \
 		--build-arg PIP_PACKAGES=$(PIP_PACKAGES) \
-		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO) --no-cache
-#	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
+#	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 
 locistack-requirements:
 	$(BUILD) /tmp/loci \
 		--build-arg PROJECT=requirements \
 		--build-arg PROJECT_REF=$(STABLE)$(OPENSTACK_RELEASE) \
-		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-base:$(DISTRO) \
-		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO) --no-cache
-	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) \
+		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
+#	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 
 locistack-libvirt:
 	$(BUILD) docker/libvirt \
-		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 
 locistack-openstack:
 	$(BUILD) docker/openstack \
-		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DISTRO)
+		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
+#	$(PUSH)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 
 locistack: locistack-build-base $(LOCI_PROJECTS)
 
@@ -161,7 +163,7 @@ openstack-client: locistack-openstack
 		-v ${CURDIR}/scripts/post-install:/scripts/post-install \
 		-v ${CURDIR}/images:/images \
 		--env-file config \
-		$(DOCKERHUB_NAMESPACE)/locistack-openstack:$(OPENSTACK_RELEASE)-$(DISTRO) bash
+		$(DOCKERHUB_NAMESPACE)/locistack-openstack:$(OPENSTACK_RELEASE)-$(DIST) bash
 
 
 up: mount-glance-storage kernel-modules

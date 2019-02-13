@@ -74,7 +74,7 @@ services:
             - './scripts/common:/scripts/common'
             - './scripts/glance:/scripts/glance'
             - './tls:/tls'
-            - '/dev/loop0:/dev/loop0'
+            - 'glance-images:/images'
         command: '/scripts/glance/start-glance-api.sh'
 
     glance-registry:
@@ -321,6 +321,30 @@ services:
             - './scripts/nova:/scripts/nova'
             - './tls:/tls'
         command: '/scripts/nova/start-nova-scheduler.sh'
+
+    nova-novncproxy:
+        image: 'hogepodge/locistack-nova:master-centos'
+        env_file: './config'
+        hostname: 'nova-novncproxy'
+        extra_hosts:
+            - "control:192.168.1.32"
+        ports:
+            - '6080:6080'
+        expose:
+            - '6080'
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'nova-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+            - './tls:/tls'
+        command: '/scripts/nova/start-nova-novncproxy.sh'
 
     libvirt:
         image: 'hogepodge/locistack-libvirt:master-centos'

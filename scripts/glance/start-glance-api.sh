@@ -1,8 +1,8 @@
 #!/bin/bash
 set -x
 
-mkdir /images
-mount /dev/loop0 /images
+#mkdir /images
+#mount /dev/loop0 /images
 
 chown -R 42424:42424 /images
 

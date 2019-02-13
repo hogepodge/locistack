@@ -36,10 +36,10 @@ firewall_driver=nova.virt.firewall.NoopFirewallDriver
 reserved_host_memory_size_mb=0
 
 # NOVNC CONSOLE
-#novncproxy_base_url=http://192.168.206.130:6080/vnc_auto.html
+novncproxy_base_url=http://${CONTROL_HOST_IP}:6080/vnc_auto.html
 # Change vncserver_proxyclient_address and vncserver_listen to match each compute host
-#vncserver_proxyclient_address=192.168.206.130
-#vncserver_listen=192.168.206.130
+vncserver_proxyclient_address=${CONTROL_HOST_IP}
+vncserver_listen=${CONTROL_HOST_IP}
 
 # AUTHENTICATION
 

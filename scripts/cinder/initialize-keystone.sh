@@ -17,8 +17,8 @@ ADMIN_ENDPOINT=https://${CONTROL_HOST_PRIVATE_IP}:8776/v2/%\(project_id\)s
                                        "${PRIVATE_ENDPOINT}" \
                                        "${ADMIN_ENDPOINT}"
 
-SERVICE_NAME=cinderv3
-SERVICE_TYPE=volumev3
+SERVICE_NAME=cinder
+SERVICE_TYPE=volume
 SERVICE_DESCRIPTION="OpenStack Volume Service"
 SERVICE_PASSWORD=${SERVICE_PASSWORD}
 PUBLIC_ENDPOINT=https://${CONTROL_HOST_IP}:8776/v3/%\(project_id\)s

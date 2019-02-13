@@ -77,30 +77,6 @@ services:
             - 'glance-images:/images'
         command: '/scripts/glance/start-glance-api.sh'
 
-    glance-registry:
-        image: 'hogepodge/locistack-glance:master-centos'
-        env_file: './config'
-        hostname: 'glance-registry'
-        extra_hosts:
-            - "control:192.168.1.32"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
-        ports:
-            - '9191:9191'
-        expose:
-            - '9191'
-        depends_on:
-            - 'mariadb'
-            - 'rabbitmq'
-            - 'keystone-api'
-            - 'glance-api'
-        volumes:
-            - './scripts/common:/scripts/common'
-            - './scripts/glance:/scripts/glance'
-            - './tls:/tls'
-        command: '/scripts/glance/start-glance-registry.sh'
-
     neutron-server:
         image: 'hogepodge/locistack-neutron:master-centos'
         env_file: './config'

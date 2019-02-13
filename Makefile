@@ -21,22 +21,6 @@ kernel-modules:
 	sudo sysctl net.bridge.bridge-nf-call-ip6tables=1
 	sudo setenforce Permissive
 
-##### Glance Storage Directory
-# Make the loopback device to hold glance storage data
-#
-# Assumption is that loop0 is the device this lands on
-#
-# make glance-storage 
-####
-
-glance-storage:
-	truncate -s 50G glance-storage
-	mkfs.xfs glance-storage
-
-mount-glance-storage: glance-storage
-	sudo losetup /dev/loop0 glance-storage
-
-
 ##### Cinder Storage
 lvm2:
 	sudo yum install -y lvm2

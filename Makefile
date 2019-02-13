@@ -52,6 +52,10 @@ cinder-requirements: thin-provisioning-tools lvm2 dm_thin_pool
 cinder-storage:
 	${CURDIR}/scripts/host/setup-cinder.sh
 
+mount-cinder-storage: glance-storage
+	sudo losetup /dev/loop1 cinder-storage
+
+
 # Get next available loop device
 # LD=$(sudo losetup -f)
 # sudo losetup $LD cinder-volumes.img
@@ -164,6 +168,8 @@ openstack-client: locistack-openstack
 		-v ${CURDIR}/images:/images \
 		--env-file config \
 		$(DOCKERHUB_NAMESPACE)/locistack-openstack:$(OPENSTACK_RELEASE)-$(DIST) bash
+
+post-boot: mount-glance-storage mount-cinder-storage kernel-modules dm_thin_pool
 
 
 up: mount-glance-storage kernel-modules

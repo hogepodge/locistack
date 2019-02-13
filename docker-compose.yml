@@ -375,7 +375,7 @@ services:
         ports:
             - '8776:8776'
         expose:
-            - '8774'
+            - '8776'
         depends_on:
             - 'mariadb'
             - 'rabbitmq'
@@ -385,6 +385,52 @@ services:
             - './scripts/cinder:/scripts/cinder'
             - './tls:/tls'
         command: '/scripts/cinder/start-cinder-api.sh'
+
+    cinder-scheduler:
+        image: 'hogepodge/locistack-cinder:master-centos'
+        env_file: './config'
+        hostname: 'cinder-scheduler'
+        extra_hosts:
+            - "control:192.168.1.32"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/cinder:/scripts/cinder'
+            - './tls:/tls'
+        command: '/scripts/cinder/start-cinder-scheduler.sh'
+
+    cinder-volume:
+        image: 'hogepodge/locistack-cinder:master-centos'
+        env_file: './config'
+        hostname: 'cinder-volume'
+        privileged: true
+        extra_hosts:
+            - "control:192.168.1.32"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'cinder-scheduler'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/cinder:/scripts/cinder'
+            - './tls:/tls'
+            - '/dev:/dev'
+            - '/run/:/run/:shared'
+            - '/etc/localtime:/etc/localtime:ro'
+            - '/lib/modules:/lib/modules:ro'
+        ports:
+            - 3260:3260
+        command: '/scripts/cinder/start-cinder-volume.sh'
 
     post-install:
         image: 'hogepodge/locistack-openstack:master-centos'

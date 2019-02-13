@@ -13,6 +13,8 @@ transport_url = rabbit://guest:${RABBITMQ_DEFAULT_PASS}@${CONTROL_HOST}
 
 auth_strategy = keystone
 
+enabled_backends = lvm
+
 [database]
 
 connection = mysql+pymysql://cinder:${MYSQL_ROOT_PASSWORD}@${CONTROL_HOST_IP}/cinder
@@ -34,5 +36,11 @@ insecure = true
 [oslo_concurrency]
 
 lock_path = /var/lib/cinder/tmp
+
+[lvm]
+volume_driver = cinder.volume.drivers.lvm.LVMVolumeDriver
+volume_group = cinder-volumes
+iscsi_protocol = iscsi
+iscsi_helper = lioadm
 
 EOF

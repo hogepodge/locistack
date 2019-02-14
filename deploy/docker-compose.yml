@@ -8,7 +8,7 @@ volumes:
 services:
     mariadb:
         image: 'mariadb:10.1.22'
-        env_file: './config'
+        env_file: '../config/config'
         environment:
             MARIADB_EXTRA_FLAGS: '--max-connections=8192'
         hostname: 'mariadb'
@@ -21,7 +21,7 @@ services:
 
     rabbitmq:
         image: 'rabbitmq:3'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'control'
         ports:
             - '5672:5672'
@@ -30,7 +30,7 @@ services:
 
     keystone-api:
         image: 'hogepodge/locistack-keystone:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'keystone'
         extra_hosts:
             - "control:192.168.1.32"
@@ -46,7 +46,7 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/keystone:/scripts/keystone'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/keystone/start-keystone-api.sh'
         depends_on:
             - 'mariadb'
@@ -54,7 +54,7 @@ services:
 
     glance-api:
         image: 'hogepodge/locistack-glance:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'glance-api'
         privileged: true
         extra_hosts:
@@ -73,13 +73,13 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/glance:/scripts/glance'
-            - './tls:/tls'
+            - '../config/tls:/tls'
             - 'glance-images:/images'
         command: '/scripts/glance/start-glance-api.sh'
 
     neutron-server:
         image: 'hogepodge/locistack-neutron:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'neutron-server'
         extra_hosts:
             - "control:192.168.1.32"
@@ -97,13 +97,13 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/neutron:/scripts/neutron'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/neutron/start-neutron-server.sh'
 
 
     neutron-linuxbridge-agent:
         image: 'hogepodge/locistack-neutron:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'neutron-linuxbridge-agent'
         privileged: true
         network_mode: 'host'
@@ -122,12 +122,12 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/neutron:/scripts/neutron'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/neutron/start-neutron-linuxbridge-agent.sh'
 
     neutron-dhcp-agent:
         image: 'hogepodge/locistack-neutron:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'neutron-dhcp-agent'
         privileged: true
         network_mode: 'host'
@@ -147,12 +147,12 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/neutron:/scripts/neutron'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/neutron/start-neutron-dhcp-agent.sh'
 
     neutron-metadata-agent:
         image: 'hogepodge/locistack-neutron:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'neutron-metadata-agent'
         privileged: true
         network_mode: 'host'
@@ -166,12 +166,12 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/neutron:/scripts/neutron'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/neutron/start-neutron-metadata-agent.sh'
 
     neutron-l3-agent:
         image: 'hogepodge/locistack-neutron:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'neutron-l3-agent'
         privileged: true
         network_mode: 'host'
@@ -185,12 +185,12 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/neutron:/scripts/neutron'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/neutron/start-neutron-l3-agent.sh'
 
     nova-api:
         image: 'hogepodge/locistack-nova:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'nova-api'
         extra_hosts:
             - "control:192.168.1.32"
@@ -208,12 +208,12 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/nova:/scripts/nova'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/nova/start-nova-api.sh'
 
     nova-metadata:
         image: 'hogepodge/locistack-nova:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'nova-api'
         extra_hosts:
             - "control:192.168.1.32"
@@ -231,12 +231,12 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/nova:/scripts/nova'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/nova/start-nova-metadata.sh'
 
     nova-placement:
         image: 'hogepodge/locistack-nova:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'nova-placement'
         extra_hosts:
             - "control:192.168.1.32"
@@ -255,12 +255,12 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/nova:/scripts/nova'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/nova/start-nova-placement.sh'
 
     nova-conductor:
         image: 'hogepodge/locistack-nova:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'nova-conductor'
         extra_hosts:
             - "control:192.168.1.32"
@@ -275,12 +275,12 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/nova:/scripts/nova'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/nova/start-nova-conductor.sh'
 
     nova-scheduler:
         image: 'hogepodge/locistack-nova:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'nova-scheduler'
         extra_hosts:
             - "control:192.168.1.32"
@@ -295,12 +295,12 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/nova:/scripts/nova'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/nova/start-nova-scheduler.sh'
 
     nova-novncproxy:
         image: 'hogepodge/locistack-nova:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'nova-novncproxy'
         extra_hosts:
             - "control:192.168.1.32"
@@ -319,7 +319,7 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/nova:/scripts/nova'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/nova/start-nova-novncproxy.sh'
 
     libvirt:
@@ -343,7 +343,7 @@ services:
     nova-compute:
         image: 'hogepodge/locistack-nova:master-centos'
         privileged: 'true'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'nova-compute'
         extra_hosts:
             - "control:192.168.1.32"
@@ -353,7 +353,7 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/nova:/scripts/nova'
-            - './tls:/tls'
+            - '../config/tls:/tls'
             - '/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket'
             - '/var/lib/nova:/var/lib/nova'
         depends_on:
@@ -365,7 +365,7 @@ services:
 
     cinder-api:
         image: 'hogepodge/locistack-cinder:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'cinder-api'
         extra_hosts:
             - "control:192.168.1.32"
@@ -383,12 +383,12 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/cinder:/scripts/cinder'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/cinder/start-cinder-api.sh'
 
     cinder-scheduler:
         image: 'hogepodge/locistack-cinder:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'cinder-scheduler'
         extra_hosts:
             - "control:192.168.1.32"
@@ -402,12 +402,12 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/cinder:/scripts/cinder'
-            - './tls:/tls'
+            - '../config/tls:/tls'
         command: '/scripts/cinder/start-cinder-scheduler.sh'
 
     cinder-volume:
         image: 'hogepodge/locistack-cinder:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'cinder-volume'
         privileged: true
         extra_hosts:
@@ -423,7 +423,7 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/cinder:/scripts/cinder'
-            - './tls:/tls'
+            - '../config/tls:/tls'
             - '/dev:/dev'
             - '/run/:/run/:shared'
             - '/etc/localtime:/etc/localtime:ro'
@@ -434,7 +434,7 @@ services:
 
     post-install:
         image: 'hogepodge/locistack-openstack:master-centos'
-        env_file: './config'
+        env_file: '../config/config'
         hostname: 'post-install'
         extra_hosts:
             - "control:192.168.1.32"

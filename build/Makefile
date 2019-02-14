@@ -1,4 +1,4 @@
-VPATH=images .phonytarget
+VPATH=images .phonytarget .build
 
 OPENSTACK_RELEASE=master
 #STABLE_PREFIX=stable/
@@ -37,15 +37,18 @@ locistack: $(LOCISTACK_BUILDS)
 .phonytarget:
 	mkdir .phonytarget
 
-loci:
-	git clone https://git.openstack.org/openstack/loci.git loci
+loci: .build
+	git clone https://git.openstack.org/openstack/loci.git .build/loci
+
+.build:
+	mkdir .build
 
 locistack-base: loci .phonytarget
 	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) loci/dockerfiles/$(DISTRO)
 	docker image inspect $(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) > .phonytarget/$@
 
 locistack-requirements: locistack-base .phonytarget
-	$(BUILD) loci \
+	$(BUILD) .build/loci \
 		--build-arg PROJECT=requirements \
 		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
 		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) \
@@ -58,7 +61,7 @@ locistack-libvirt: locistack-base .phonytarget
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
 $(LOCI_PROJECTS): locistack-base locistack-requirements .phonytarget
-	$(BUILD) loci \
+	$(BUILD) .build/loci \
 		--build-arg PROJECT=$(subst locistack-,$(EMPTY),$@) \
 		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
 		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) \

@@ -30,7 +30,6 @@ logs:
 client:
 	docker run -it --rm \
 		-v ${CURDIR}/scripts/common:/scripts/common \
-		-v ${CURDIR}/scripts/client:/scripts/client \
 		-v ${CURDIR}/scripts/post-install:/scripts/post-install \
 		-v ${CURDIR}/../build/images:/images \
 		--env-file ${CURDIR}/../config/config \

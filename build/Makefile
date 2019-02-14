@@ -1,4 +1,4 @@
-VPATH=images
+VPATH=images .phonytarget
 
 OPENSTACK_RELEASE=master
 #STABLE_PREFIX=stable/
@@ -20,12 +20,6 @@ DIST=$(subst :,$(EMPTY),$(DISTRO))
 BUILD = docker build
 PUSH = docker push $(DOCKERHUB_NAMESPACE)
 
-##### Loci Containers
-# Building the Loci packages and push them to Docker Hub.
-#
-# make locistack: build and push all of the Loci images
-#####
-
 LOCI_PROJECTS = locistack-keystone \
 		locistack-glance \
 		locistack-neutron \
@@ -38,27 +32,32 @@ LOCISTACK_BUILDS = locistack-base \
 		$(LOCI_PROJECTS) \
 		locistack-openstack
 
+locistack: $(LOCISTACK_BUILDS)
+
+.phonytarget:
+	mkdir .phonytarget
+
 loci:
 	git clone https://git.openstack.org/openstack/loci.git loci
 
-locistack-base: loci
+locistack-base: loci .phonytarget
 	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) loci/dockerfiles/$(DISTRO)
-	touch $@
+	docker image inspect $(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) > .phonytarget/$@
 
-locistack-requirements: locistack-base
+locistack-requirements: locistack-base .phonytarget
 	$(BUILD) loci \
 		--build-arg PROJECT=requirements \
 		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
 		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
-	touch $@
+	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-locistack-libvirt: locistack-base
+locistack-libvirt: locistack-base .phonytarget
 	$(BUILD) libvirt \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
-	touch $@
+	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-$(LOCI_PROJECTS): locistack-base locistack-requirements
+$(LOCI_PROJECTS): locistack-base locistack-requirements .phonytarget
 	$(BUILD) loci \
 		--build-arg PROJECT=$(subst locistack-,$(EMPTY),$@) \
 		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
@@ -67,14 +66,13 @@ $(LOCI_PROJECTS): locistack-base locistack-requirements
 		--build-arg DIST_PACKAGES=$($(subst locistack-,$(EMPTY),$@)-DIST_PACKAGES) \
 		--build-arg PIP_PACKAGES=$(PIP_PACKAGES) \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
-	touch $@
+	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-locistack-openstack: locistack-base
+locistack-openstack: locistack-base .phonytarget
 	$(BUILD) openstack \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
-	touch $@
+	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-locistack: $(LOCISTACK_BUILDS)
 
 centos7-k8s.qcow2:
 	cd images && ./k8s.sh

@@ -1,23 +1,24 @@
-VPATH=tls,/dev
+VPATH=tls /dev .phonytarget
 
 all: docker packages kernel-modules certs loop0
 
 post-boot: kernel-modules loop0
 
-docker: get-docker.sh
-	./get-docker.sh
-	touch docker
+docker: get-docker.sh .phonytarget
+	./get-docker.sh 2>&1 | tee .phonytarget/docker
 
 get-docker.sh:
 	curl -fsSL https://get.docker.com -o get-docker.sh
 	chmod +x get-docker.sh
 
-packages:
+packages: .phonytarget
 	sudo yum install -y device-mapper-persistent-data \
 				lvm2 \
-				diskimage-builder
+				diskimage-builder 2>&1 | \
+		tee .phonytarget/packages
 
-	touch packages
+.phonytarget:
+	mkdir .phonytarget
 
 kernel-modules: packages
 	sudo modprobe iscsi_tcp

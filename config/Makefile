@@ -32,7 +32,7 @@ kernel-modules: packages
 	sudo setenforce Permissive
 	sudo modprobe dm_thin_pool
 
-certs: tls tls/openstack.key tls/openstack.csr tls/openstack.crt
+certs: tls openstack.key openstack.csr openstack.crt
 
 tls:
 	mkdir tls

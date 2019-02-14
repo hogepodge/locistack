@@ -1,10 +1,9 @@
-
 Locistack
 =========
 
 Locistack is a basic OpenStack installer built on `OpenStack Loci`_ and
 `Docker Compose`_. It serves many purposes, including being a fast,
-non-ha OpenStack deployment useful for small clusters and testing. It is
+non-HA OpenStack deployment useful for small clusters and testing. It is
 being developed as a proof-of-concept platform for functional testing of
 OpenStack Loci.
 
@@ -17,48 +16,50 @@ I will consider adding Alpine_, Ubuntu_, and Suse_ support, but as this
 is still a one-person project I'll favor moving forward in completeness
 over additional support.
 
-All of that to say, Step 1 is to go get CentOS_ if you want to run this.
+Locistack has three major phases for deployment: config, build, and
+deploy. These should be done in order for a successful deployment (in the
+future config may be split up into host-config and guest-config, since
+they have different targets). 
 
-Step 2 is to `install Docker`_, `Docker Compose`, and Git_.
+config
+~~~~~~
+In the config directory you can install everythin you need by executing
+`make_ all`. This will install docker as well as other essential
+packages, load the necessary kernel modules you will need to operate the
+cluster, create TLS certificates (this is an interactive step), and
+create and mount a Cinder storage loopback device.
 
-With your host is set up, Step 3 is to fetch this project with ``git clone
-https://github.com/hogepodge/locistack``.
+If you've already run `make all` on a system you've rebooted, you only
+need to run `make post-boot` to reload the kernel and security settings
+and remount the loop device.
 
-For Step 4 you need to do a bit of setup to load kernel modules and make
-selinux permissive (yes yes I know...). You also need to create a
-permanent storage volume for glance and mount it to loopback device
-`/dev/loop0`.  Locistack provides make_ targets to do all those things.
+Once you've configured the host, you need to edit the `config/config`
+file to match the settings for your system.
 
-.. codeblock:: shell
+build
+~~~~~
+The next step is to build your Loci and supporting containers. In the
+build directory `make locistack` will build all of your containers. Be
+sure to set your `DOCKERHUB_NAMESPACE` and other build related variable
+in the Makefile.
 
-   cd locistack
-   make kernel-images
-   make glance-storage
-   make mount-glance-storage
+You can also optionally build some images to boot in your OpenStack
+environment. Right now there is support for a CentOS-based Kubernetes
+image. You can build it with `make centos7-k8s.qcow2`.
 
-You'll need to build your custom Loci images for Step 5. Do that by
-setting environment variable inside of the ``Makefile`` to match your
-`Docker Hub`_ account settings and executing ``make locistack``. This is
-going to take a while. It's the longest step in the process.
+deploy
+~~~~~~
+With your configuration and build done, deploy OpenStack with `make up`
+in the deploy directory. This will run `docker-compose` in daemon mode.
+You can bring the cluster down with `make down`, shut the cluster down
+and remove state with `make down-v`, and follow all of the logs with
+`make logs`.
 
-For Step 6 It's time to configure Locistack! Do this by editing the
-environment variables in ``config`` and please don't come crying to me
-when your publicly visible OpenStack cloud is owned because you didn't
-change the default passwords.
+Connect to your cluster with `make client`, then within the client source
+your credentials with `source /scripts/common/admin`. Since the
+certificates are unsigned you'll need to run the OpenStack Client in
+insecure mode, `openstack --insecure`.
 
-With that out of the way, the final step is to call ``docker-compose up
--d``. You can follow the progress of all of the containers starting by
-running ``docker-compose logs -f`` and you can even optionally follow the
-loga of just one container. I suggest ``docker-compose logs -f
-post-install`` since it's the container that does all the final
-initializing of things like images and networks and security groups.
-
-With that done, go ahead and try out your cloud. You can bring up an
-`OpenStack client`_ with ``make openstack-client``. Call ``source
-/scripts/common/adminrc`` when the container starts and run ``openstack``
-to interact with your cluster.
-
-Have a good time with OpenStack and Loci!
 
 .. image:: loci.jpg
 

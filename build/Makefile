@@ -1,3 +1,5 @@
+VPATH=images
+
 OPENSTACK_RELEASE=master
 #STABLE_PREFIX=stable/
 DISTRO=centos
@@ -73,6 +75,9 @@ locistack-openstack: locistack-base
 	touch $@
 
 locistack: $(LOCISTACK_BUILDS)
+
+centos7-k8s.qcow2:
+	cd images && ./k8s.sh
 
 clean:
 	rm locistack*

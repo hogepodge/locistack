@@ -14,7 +14,9 @@ get-docker.sh:
 
 packages:
 	sudo yum install -y device-mapper-persistent-data \
-				lvm2
+				lvm2 \
+				diskimage-builder
+
 	touch packages
 
 kernel-modules: packages

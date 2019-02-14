@@ -34,7 +34,7 @@ LOCISTACK_BUILDS = locistack-base \
 		locistack-libvirt \
 		locistack-requirements \
 		$(LOCI_PROJECTS) \
-		lockstack-openstack
+		locistack-openstack
 
 loci:
 	git clone https://git.openstack.org/openstack/loci.git loci

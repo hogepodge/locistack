@@ -1,21 +1,31 @@
+VPATH=.clusterstate
+
 DOCKERHUB_NAMESPACE=hogepodge
 OPENSTACK_RELEASE=master
 DIST=centos
 
-up:
-	docker-compose up -d
-	touch up
+up: .clusterstate
+	rm -f .clusterstate/down
+	rm -f .clusterstate/down-v
+	docker-compose up -d 2>&1 | tee .clusterstate/up
 
-down:
-	docker-compose down
-	rm up
+down: .clusterstate
+	touch .clusterstate/up
+	mv .clusterstate/up .clusterstate/down
+	docker-compose down 2>&1 | tee -a .clusterstate/down
 
-down-v:
-	docker-compose down -v
-	rm up
+down-v: .clusterstate
+	touch .clusterstate/up
+	touch .clusterstate/down
+	cat .clusterstate/up .clusterstate/down > .clusterstate/down-v
+	rm .clusterstate/up .clusterstate/down
+	docker-compose down -v 2>&1 | tee -a .clusterstate/down-v
 
 logs:
 	docker-compose logs -f
+
+.clusterstate:
+	mkdir .clusterstate
 
 client:
 	docker run -it --rm \

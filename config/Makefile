@@ -5,11 +5,11 @@ all: docker packages kernel-modules certs loop0
 post-boot: kernel-modules loop0 loop1
 
 docker: get-docker.sh .phonytarget
-	./get-docker.sh 2>&1 | tee .phonytarget/docker
+	./scripts/get-docker.sh 2>&1 | tee .phonytarget/docker
 
 get-docker.sh:
-	curl -fsSL https://get.docker.com -o get-docker.sh
-	chmod +x get-docker.sh
+	curl -fsSL https://get.docker.com -o ./scripts/get-docker.sh
+	chmod +x ./scripts/get-docker.sh
 
 packages: .phonytarget
 	sudo yum install -y device-mapper-persistent-data \
@@ -49,7 +49,7 @@ openstack.crt: tls openstack.key openstack.csr
 
 cinder-storage:
 	sudo truncate --size=20G cinder-storage
-	./setup-cinder.sh
+	./scripts/setup-cinder.sh
 
 loop0: cinder-storage
 	sudo losetup /dev/loop0 cinder-storage

@@ -1,0 +1,85 @@
+#!/bin/bash
+cat > /etc/swift/proxy-server.conf <<- EOF
+[DEFAULT]
+bind_port = 8080
+workers = 1
+user = swift
+log_facility = LOG_LOCAL1
+eventlet_debug = True
+
+[pipeline:main]
+#pipeline = catch_errors gatekeeper healthcheck proxy-logging cache bulk tempurl slo dlo ratelimit crossdomain tempauth staticweb container-quotas account-quotas proxy-logging proxy-server
+pipeline = catch_errors gatekeeper healthcheck proxy-logging cache bulk tempurl ratelimit authtoken keystoneauth container-quotas account-quotas slo dlo proxy-logging proxy-server
+
+[filter:keystoneauth]
+use = egg:swift#keystoneauth
+operator_roles = admin,user
+
+[filter:authtoken]
+paste.filter_factory = keystonemiddleware.auth_token:filter_factory
+auth_uri = https://${CONTROL_HOST_IP}:5000
+auth_url = https://${CONTROL_HOST_IP}:35357
+auth_type = password
+project_domain_name = Default
+user_domain_name = Default
+project_name = service
+username = swift
+password = ${SERVICE_PASSWORD}
+delay_auth_decision = true
+insecure = true
+
+[filter:catch_errors]
+use = egg:swift#catch_errors
+
+[filter:healthcheck]
+use = egg:swift#healthcheck
+
+[filter:proxy-logging]
+use = egg:swift#proxy_logging
+
+[filter:bulk]
+use = egg:swift#bulk
+
+[filter:ratelimit]
+use = egg:swift#ratelimit
+
+[filter:crossdomain]
+use = egg:swift#crossdomain
+
+[filter:dlo]
+use = egg:swift#dlo
+
+[filter:slo]
+use = egg:swift#slo
+
+[filter:tempurl]
+use = egg:swift#tempurl
+
+[filter:tempauth]
+storage_url_scheme = default
+use = egg:swift#tempauth
+user_admin_admin = admin .admin .reseller_admin
+user_test_tester = testing .admin
+user_test2_tester2 = testing2 .admin
+user_test_tester3 = testing3
+
+[filter:staticweb]
+use = egg:swift#staticweb
+
+[filter:account-quotas]
+use = egg:swift#account_quotas
+
+[filter:container-quotas]
+use = egg:swift#container_quotas
+
+[filter:cache]
+use = egg:swift#memcache
+
+[filter:gatekeeper]
+use = egg:swift#gatekeeper
+
+[app:proxy-server]
+use = egg:swift#proxy
+allow_account_management = True
+account_autocreate = True
+EOF

@@ -432,6 +432,30 @@ services:
             - 3260:3260
         command: '/scripts/cinder/start-cinder-volume.sh'
 
+    swift-proxy:
+        image: 'hogepodge/locistack-swift:master-centos'
+        env_file: '../config/config'
+        hostname: 'swift'
+        extra_hosts:
+            - "control:192.168.1.32"
+        privileged: true
+        ports:
+            - '8888:8080'
+        expose:
+            - '8080'
+        volumes:
+            - '/dev/loop1:/dev/loop1'
+            - './scripts/common:/scripts/common'
+            - './scripts/swift:/scripts/swift'
+        networks:
+            swiftnet:
+                ipv4_address: '172.16.16.16'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        command: '/scripts/swift/start-service.sh'
+
     post-install:
         image: 'hogepodge/locistack-openstack:master-centos'
         env_file: '../config/config'
@@ -442,3 +466,10 @@ services:
             - './scripts/common:/scripts/common'
             - './scripts/post-install:/scripts/post-install'
         command: '/scripts/post-install/post-install.sh'
+
+networks:
+    swiftnet:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 172.16.16.0/24

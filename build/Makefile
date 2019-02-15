@@ -12,8 +12,10 @@ glance-DIST_PACKAGES="curl mariadb vim wget which"
 neutron-DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived mariadb openvswitch uuid vim wget which"
 nova-DIST_PACKAGES="curl libvirt libxml2 mariadb openvswitch uuid vim wget which"
 cinder-DIST_PACKAGES="curl lvm2 mariadb targetcli device-mapper-persistent-data vim wget which"
-horizon-DIST_PACKAGES="httpd curl mariadb memcached mod_wsgi vim wget which"
-PIP_PACKAGES="python-openstackclient python-swiftclient"
+ironic-DIST_PACKAGES="curl gdisk gettext graphviz ipmitool ipxe-bootimgs iscsi-initiator-utils mariadb parted psmisc qemu-img syslinux tftp-server wget which xinetd"
+swift-DIST_PACKAGES="rsync liberasurecode memcached vim wget curl which"
+#horizon-DIST_PACKAGES="httpd curl mariadb memcached mod_wsgi vim wget which"
+PIP_PACKAGES="python-openstackclient python-swiftclient python-ironicclient keystonemiddleware"
 EMPTY:=
 DIST=$(subst :,$(EMPTY),$(DISTRO))
 
@@ -24,7 +26,9 @@ LOCI_PROJECTS = locistack-keystone \
 		locistack-glance \
 		locistack-neutron \
 		locistack-nova \
-		locistack-cinder
+		locistack-cinder \
+		locistack-ironic \
+		locistack-swift
 
 LOCISTACK_BUILDS = locistack-base \
 		locistack-libvirt \
@@ -43,11 +47,11 @@ loci: .build
 .build:
 	mkdir .build
 
-locistack-base: loci .phonytarget
-	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) loci/dockerfiles/$(DISTRO)
+locistack-base: loci
+	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) .build/loci/dockerfiles/$(DISTRO)
 	docker image inspect $(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) > .phonytarget/$@
 
-locistack-requirements: locistack-base .phonytarget
+locistack-requirements: locistack-base
 	$(BUILD) .build/loci \
 		--build-arg PROJECT=requirements \
 		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
@@ -55,12 +59,12 @@ locistack-requirements: locistack-base .phonytarget
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-locistack-libvirt: locistack-base .phonytarget
+locistack-libvirt: locistack-base
 	$(BUILD) libvirt \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-$(LOCI_PROJECTS): locistack-base locistack-requirements .phonytarget
+$(LOCI_PROJECTS): locistack-base locistack-requirements
 	$(BUILD) .build/loci \
 		--build-arg PROJECT=$(subst locistack-,$(EMPTY),$@) \
 		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
@@ -71,7 +75,7 @@ $(LOCI_PROJECTS): locistack-base locistack-requirements .phonytarget
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-locistack-openstack: locistack-base .phonytarget
+locistack-openstack: locistack-base
 	$(BUILD) openstack \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@

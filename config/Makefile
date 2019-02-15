@@ -2,7 +2,7 @@ VPATH=tls /dev .phonytarget
 
 all: docker packages kernel-modules certs loop0
 
-post-boot: kernel-modules loop0
+post-boot: kernel-modules loop0 loop1
 
 docker: get-docker.sh .phonytarget
 	./get-docker.sh 2>&1 | tee .phonytarget/docker
@@ -49,9 +49,19 @@ openstack.crt: tls openstack.key openstack.csr
 
 cinder-storage:
 	sudo truncate --size=20G cinder-storage
+	./setup-cinder.sh
 
 loop0: cinder-storage
-	./setup-cinder.sh
+	sudo losetup /dev/loop0 cinder-storage
+	yes | sudo pvcreate /dev/loop0
+	sudo vgcreate cinder-volumes /dev/loop0
+
+swift-storage:
+	sudo truncate --size=20G swift-storage
+	mkfs.xfs swift-storage
+
+loop1: swift-storage
+	sudo losetup /dev/loop1 swift-storage
 
 clean:
 	rm -f docker packages get-docker.sh

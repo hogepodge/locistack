@@ -1,7 +1,7 @@
 VPATH=images .phonytarget .build
 
-OPENSTACK_RELEASE=master
-#STABLE_PREFIX=stable/
+OPENSTACK_RELEASE=rocky
+STABLE_PREFIX=stable/
 DISTRO=centos
 
 DOCKERHUB_NAMESPACE=hogepodge

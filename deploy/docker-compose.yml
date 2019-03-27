@@ -29,7 +29,7 @@ services:
             - '5672'
 
     keystone-api:
-        image: 'hogepodge/locistack-keystone:master-centos'
+        image: 'hogepodge/locistack-keystone:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'keystone'
         extra_hosts:
@@ -53,7 +53,7 @@ services:
             - 'rabbitmq'
 
     glance-api:
-        image: 'hogepodge/locistack-glance:master-centos'
+        image: 'hogepodge/locistack-glance:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'glance-api'
         privileged: true
@@ -78,7 +78,7 @@ services:
         command: '/scripts/glance/start-glance-api.sh'
 
     neutron-server:
-        image: 'hogepodge/locistack-neutron:master-centos'
+        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'neutron-server'
         extra_hosts:
@@ -102,7 +102,7 @@ services:
 
 
     neutron-linuxbridge-agent:
-        image: 'hogepodge/locistack-neutron:master-centos'
+        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'neutron-linuxbridge-agent'
         privileged: true
@@ -126,7 +126,7 @@ services:
         command: '/scripts/neutron/start-neutron-linuxbridge-agent.sh'
 
     neutron-dhcp-agent:
-        image: 'hogepodge/locistack-neutron:master-centos'
+        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'neutron-dhcp-agent'
         privileged: true
@@ -151,7 +151,7 @@ services:
         command: '/scripts/neutron/start-neutron-dhcp-agent.sh'
 
     neutron-metadata-agent:
-        image: 'hogepodge/locistack-neutron:master-centos'
+        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'neutron-metadata-agent'
         privileged: true
@@ -170,7 +170,7 @@ services:
         command: '/scripts/neutron/start-neutron-metadata-agent.sh'
 
     neutron-l3-agent:
-        image: 'hogepodge/locistack-neutron:master-centos'
+        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'neutron-l3-agent'
         privileged: true
@@ -189,7 +189,7 @@ services:
         command: '/scripts/neutron/start-neutron-l3-agent.sh'
 
     nova-api:
-        image: 'hogepodge/locistack-nova:master-centos'
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-api'
         extra_hosts:
@@ -212,7 +212,7 @@ services:
         command: '/scripts/nova/start-nova-api.sh'
 
     nova-metadata:
-        image: 'hogepodge/locistack-nova:master-centos'
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-api'
         extra_hosts:
@@ -235,7 +235,7 @@ services:
         command: '/scripts/nova/start-nova-metadata.sh'
 
     nova-placement:
-        image: 'hogepodge/locistack-nova:master-centos'
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-placement'
         extra_hosts:
@@ -259,7 +259,7 @@ services:
         command: '/scripts/nova/start-nova-placement.sh'
 
     nova-conductor:
-        image: 'hogepodge/locistack-nova:master-centos'
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-conductor'
         extra_hosts:
@@ -279,7 +279,7 @@ services:
         command: '/scripts/nova/start-nova-conductor.sh'
 
     nova-scheduler:
-        image: 'hogepodge/locistack-nova:master-centos'
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-scheduler'
         extra_hosts:
@@ -299,7 +299,7 @@ services:
         command: '/scripts/nova/start-nova-scheduler.sh'
 
     nova-novncproxy:
-        image: 'hogepodge/locistack-nova:master-centos'
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-novncproxy'
         extra_hosts:
@@ -323,7 +323,7 @@ services:
         command: '/scripts/nova/start-nova-novncproxy.sh'
 
     libvirt:
-        image: 'hogepodge/locistack-libvirt:master-centos'
+        image: 'hogepodge/locistack-libvirt:${OPENSTACK_RELEASE}-${DISTRO}'
         privileged: 'true'
         network_mode: 'host'
         pid: 'host'
@@ -341,7 +341,7 @@ services:
         command: '/start-libvirt.sh'
 
     nova-compute:
-        image: 'hogepodge/locistack-nova:master-centos'
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         privileged: 'true'
         env_file: '../config/config'
         hostname: 'nova-compute'
@@ -364,7 +364,7 @@ services:
         command: '/scripts/nova/start-nova-compute.sh'
 
     cinder-api:
-        image: 'hogepodge/locistack-cinder:master-centos'
+        image: 'hogepodge/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'cinder-api'
         extra_hosts:
@@ -387,7 +387,7 @@ services:
         command: '/scripts/cinder/start-cinder-api.sh'
 
     cinder-scheduler:
-        image: 'hogepodge/locistack-cinder:master-centos'
+        image: 'hogepodge/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'cinder-scheduler'
         extra_hosts:
@@ -406,7 +406,7 @@ services:
         command: '/scripts/cinder/start-cinder-scheduler.sh'
 
     cinder-volume:
-        image: 'hogepodge/locistack-cinder:master-centos'
+        image: 'hogepodge/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'cinder-volume'
         privileged: true
@@ -433,7 +433,7 @@ services:
         command: '/scripts/cinder/start-cinder-volume.sh'
 
     swift-proxy:
-        image: 'hogepodge/locistack-swift:master-centos'
+        image: 'hogepodge/locistack-swift:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'swift'
         extra_hosts:
@@ -457,7 +457,7 @@ services:
         command: '/scripts/swift/start-service.sh'
 
     post-install:
-        image: 'hogepodge/locistack-openstack:master-centos'
+        image: 'hogepodge/locistack-openstack:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'post-install'
         extra_hosts:

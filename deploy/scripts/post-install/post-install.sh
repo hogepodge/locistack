@@ -189,13 +189,13 @@ if ! ${OPENSTACK} flavor list | grep -q m1.xlarge; then
     ${OPENSTACK} flavor create --id 5 --ram 16384 --disk 160 --vcpus 6 m1.xlarge
 fi
 
-DEMO_NET_ID=$(openstack network list | awk '/ demo-net / {print $2}')
+DEMO_NET_ID=$(openstack --insecure network list | awk '/ demo-net / {print $2}')
 
 cat << EOF
 Locistack is installed and configured.
 
 To deploy a demo instance, run:
-openstack server create \\
+openstack --insecure server create \\
     --image ${IMAGE_NAME} \\
     --flavor m1.tiny \\
     --key-name mykey \\

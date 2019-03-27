@@ -33,6 +33,7 @@ LOCI_PROJECTS = locistack-keystone \
 LOCISTACK_BUILDS = locistack-base \
 		locistack-libvirt \
 		locistack-requirements \
+		locistack-dnsmasq \
 		$(LOCI_PROJECTS) \
 		locistack-openstack
 
@@ -63,6 +64,12 @@ locistack-libvirt: locistack-base
 	$(BUILD) libvirt \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
+
+locistack-dnsmasq:
+	$(BUILD) dnsmasq \
+		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
+	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
+
 
 $(LOCI_PROJECTS): locistack-base locistack-requirements
 	$(BUILD) .build/loci \

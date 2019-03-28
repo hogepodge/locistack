@@ -1,0 +1,98 @@
+version: '2.2'
+
+services:
+    dnsmasq-ipmi:
+        image: 'hogepodge/locistack-dnsmasq:master-centos'
+        env_file: './config'
+        ports:
+            - '53:53'
+            - '53:53/udp'
+        expose:
+            - '53'
+        cap_add:
+            - 'NET_ADMIN'
+        network_mode: 'host'
+            - './scripts/common:/scripts/common'
+            - './scripts/dnsmasq:/scripts/dnsmasq'
+        command: '/scrips/dnsmasq/start_dnsmasq.sh'
+
+    ironic-api:
+        build: 'service-containers/ironic/.'
+        env_file: './config'
+        hostname: 'ironic-api'
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '6385:6385'
+        expose:
+            - '6385'
+        volumes:
+            - 'ironic-imagedata-volume:/imagedata'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'neutron-server'
+            - 'glance-api'
+            - 'swift-proxy'
+        command: '/start-ironic-api.sh'
+
+    ironic-conductor:
+        build: 'service-containers/ironic/.'
+        env_file: './config'
+        hostname: 'ironic-conductor'
+        volumes:
+            - 'ironic-imagedata-volume:/imagedata'
+            - '/dev:/dev:rw'
+        privileged: true 
+        network_mode: 'host'
+        ports:
+            - '3260:3260'
+        expose:
+            - '3260'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'ironic-api'
+        command: '/start-ironic-conductor.sh'
+
+    ironic-tftp:
+        build: 'service-containers/ironic/.'
+        env_file: './config'
+        hostname: 'ironic-tftp'
+        ports:
+            - '69:69/udp'
+            - '69:69'
+        expose:
+            - '69'
+            - '69/udp'
+        volumes:
+            - 'ironic-imagedata-volume:/imagedata'
+        command: '/start-ironic-tftp.sh'
+
+    ironic-nginx:
+        build: 'service-containers/ironic/.'
+        env_file: './config'
+        hostname: 'ironic-nginx'
+        extra_hosts:
+            - '${CONTROL_HOST}:${CONTROL_HOST_IP}'
+        ports: 
+            - '8080:8080'
+        expose:
+            - '8080'
+        volumes:
+            - 'ironic-imagedata-volume:/imagedata'
+        command: '/start-ironic-nginx.sh'
+
+    ironic-iscsi:
+        build: 'service-containers/ironic/.'
+        env_file: './config'
+        hostname: 'ironic-iscsi'
+        privileged: true
+        network_mode: 'host'
+        volumes:
+            - '/dev/disk:/dev/disk'
+        command: '/start-ironic-iscsid.sh'

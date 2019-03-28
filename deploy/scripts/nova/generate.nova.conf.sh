@@ -21,7 +21,7 @@ scheduler_tracks_instance_changes = False
 osapi_compute_workers = 1
 metadata_workers = 1
 
-compute_driver = libvirt.LibvirtDriver
+compute_driver = ${COMPUTE_DRIVER}
 api_paste_config = /etc/nova/api-paste.ini
 
 # instance_name_template=baremetal-%08x
@@ -96,6 +96,16 @@ os_region_name = RegionOne
 project_domain_name = Default
 user_domain_name = Default
 insecure = true
+
+[ironic]
+
+auth_type=password
+auth_url=https://${CONTROL_HOST_IP}:5000/v3
+project_name=service
+username=ironic
+password=${SERVICE_PASSWORD}
+project_domain_name=Default
+user_domain_name=Default
 
 [workaround]
 disable_rootwrap = True

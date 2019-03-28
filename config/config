@@ -30,6 +30,9 @@ PROVIDER_DNS_NAMESERVER=8.8.4.4
 
 ## Nova Settings
 NOVA_DEBUG=true
+COMPUTE_DRIVER=libvirt.LibvirtDriver
+# Change to Ironic Driver to use bare metal
+# COMPUTE_DRIVER=ironic.IronicDriver
 
 ### Swift Settings
 SWIFT_USER_PASSWORD=testing
@@ -40,6 +43,17 @@ SWIFT_TEMP_URL_KEY=TempURLKey
 
 ### General Service Settings
 SERVICE_PASSWORD=xxxxxxxx
+
+### dnsmasq settings
+IPMI_INTERFACE=eno1.20
+IPMI_RANGE=192.168.20.10,192.168.20.20,12h
+DATA_RANGE=192.168.30.10,192.168.30.20,12h
+DHCP_HOST_01=dhcp-host=ac:1f:6b:12:64:10,192.168.20.11
+DHCP_HOST_02=dhcp-host=0c:c4:7a:ca:3a:4b,192.168.20.12
+DHCP_HOST_03=dhcp-host=0c:c4:7a:9a:3c:64,192.168.20.13
+
+### Ironic Settings
+IRONIC_DEBUG=false
 
 ### etcd Settings
 ETCD_UUID=4e4b063d-dcee-4555-8c2e-dee8be6e3eff

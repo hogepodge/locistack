@@ -2,6 +2,7 @@ config/.phonytarget
 build/.phonytarget
 build/.build
 deploy/.clusterstate
+deploy/.env
 build/images/*qcow2
 build/images/*.d
 *.swp

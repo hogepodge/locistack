@@ -1,3 +1,7 @@
+### Deployment container settings
+OPENSTACK_RELEASE=rocky
+DISTRO=centos
+
 ### General settings
 CONTROL_HOST=control
 CONTROL_HOST_IP=192.168.1.32
@@ -43,3 +47,4 @@ SERVICE_PASSWORD=xxxxxxxx
 
 ### etcd Settings
 ETCD_UUID=4e4b063d-dcee-4555-8c2e-dee8be6e3eff
+

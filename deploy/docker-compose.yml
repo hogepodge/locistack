@@ -22,7 +22,7 @@ services:
     rabbitmq:
         image: 'rabbitmq:3'
         env_file: '../config/config'
-        hostname: 'control'
+        hostname: '${CONTROL_HOST}'
         ports:
             - '5672:5672'
         expose:
@@ -33,7 +33,7 @@ services:
         env_file: '../config/config'
         hostname: 'keystone'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         ports:
             - '5000:5000'
             - '35357:35357'
@@ -58,7 +58,7 @@ services:
         hostname: 'glance-api'
         privileged: true
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -82,7 +82,7 @@ services:
         env_file: '../config/config'
         hostname: 'neutron-server'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -193,7 +193,7 @@ services:
         env_file: '../config/config'
         hostname: 'nova-api'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -216,7 +216,7 @@ services:
         env_file: '../config/config'
         hostname: 'nova-api'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -239,7 +239,7 @@ services:
         env_file: '../config/config'
         hostname: 'nova-placement'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -263,7 +263,7 @@ services:
         env_file: '../config/config'
         hostname: 'nova-conductor'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -283,7 +283,7 @@ services:
         env_file: '../config/config'
         hostname: 'nova-scheduler'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -303,7 +303,7 @@ services:
         env_file: '../config/config'
         hostname: 'nova-novncproxy'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         ports:
             - '6080:6080'
         expose:
@@ -346,7 +346,7 @@ services:
         env_file: '../config/config'
         hostname: 'nova-compute'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -368,7 +368,7 @@ services:
         env_file: '../config/config'
         hostname: 'cinder-api'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -391,7 +391,7 @@ services:
         env_file: '../config/config'
         hostname: 'cinder-scheduler'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -411,7 +411,7 @@ services:
         hostname: 'cinder-volume'
         privileged: true
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         links:
             - 'mariadb'
             - 'rabbitmq'
@@ -437,7 +437,7 @@ services:
         env_file: '../config/config'
         hostname: 'swift'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         privileged: true
         ports:
             - '8888:8080'
@@ -461,7 +461,7 @@ services:
         env_file: '../config/config'
         hostname: 'post-install'
         extra_hosts:
-            - "control:192.168.1.32"
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/post-install:/scripts/post-install'

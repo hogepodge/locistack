@@ -4,7 +4,7 @@ DOCKERHUB_NAMESPACE=hogepodge
 OPENSTACK_RELEASE=master
 DIST=centos
 
-up: .clusterstate
+up: .clusterstate .env
 	rm -f .clusterstate/down
 	rm -f .clusterstate/down-v
 	docker-compose up -d 2>&1 | tee .clusterstate/up
@@ -26,6 +26,9 @@ logs:
 
 .clusterstate:
 	mkdir .clusterstate
+
+.env:
+	cp ../config/config .env
 
 client:
 	docker run -it --rm \

@@ -1,5 +1,5 @@
 ### Deployment container settings
-OPENSTACK_RELEASE=rocky
+OPENSTACK_RELEASE=master
 DISTRO=centos
 
 ### General settings

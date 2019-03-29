@@ -1,7 +1,7 @@
 VPATH=images .phonytarget .build
 
-OPENSTACK_RELEASE=rocky
-STABLE_PREFIX=stable/
+OPENSTACK_RELEASE=master
+#STABLE_PREFIX=stable/
 DISTRO=centos
 
 DOCKERHUB_NAMESPACE=hogepodge
@@ -20,7 +20,7 @@ EMPTY:=
 DIST=$(subst :,$(EMPTY),$(DISTRO))
 
 BUILD = docker build
-PUSH = docker push $(DOCKERHUB_NAMESPACE)
+PUSH = docker push
 
 LOCI_PROJECTS = locistack-keystone \
 		locistack-glance \
@@ -58,6 +58,7 @@ locistack-requirements: locistack-base
 		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
 		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
+	$(PUSH) $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
 locistack-libvirt: locistack-base

@@ -1,5 +1,7 @@
 VPATH=tls /dev .phonytarget
 
+enough: kernel-modules certs loop0 loop1
+
 all: docker packages kernel-modules certs loop0 loop1
 
 post-boot: kernel-modules loop0 loop1

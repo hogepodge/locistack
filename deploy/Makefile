@@ -13,6 +13,16 @@ down: .clusterstate
 	touch .clusterstate/up
 	mv .clusterstate/up .clusterstate/down
 	docker-compose down 2>&1 | tee -a .clusterstate/down
+	
+up-ironic: .clusterstate .env
+	rm -rf .clusterstate/down
+	rm -rf .clusterstate/down-v
+	docker-compose -f docker-compose.yml -f docker-compose-ironic.yml up -d 2>&1 | tee .clusterstate/up
+
+down-ironic: .clusterstate
+	touch .clusterstate/up
+	mv .clusterstate/up .clusterstate/down
+	docker-compose -f docker-compose.yml -f docker-compose-ironic.yml down 2>&1 | tee .clusterstate/down
 
 down-v: .clusterstate
 	touch .clusterstate/up

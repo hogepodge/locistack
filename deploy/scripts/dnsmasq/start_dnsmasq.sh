@@ -1,3 +1,3 @@
 #!/bin/sh
-/dnsmasq.conf.sh
+/scripts/dnsmasq/dnsmasq.conf.sh
 dnsmasq -k

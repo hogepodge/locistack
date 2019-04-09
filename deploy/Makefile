@@ -33,6 +33,9 @@ down-v: .clusterstate
 
 logs:
 	docker-compose logs -f
+	
+logs-ironic:
+	docker-compose -f docker-compose.yml -f docker-compose-ironic.yml logs -f
 
 .clusterstate:
 	mkdir .clusterstate

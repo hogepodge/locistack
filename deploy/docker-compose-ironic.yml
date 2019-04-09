@@ -34,7 +34,9 @@ services:
             - '6385'
         volumes:
             - 'ironic-imagedata-volume:/imagedata'
+            - './scripts/common:/scripts/common'
             - './scripts/ironic:/scripts/ironic'
+            - '../config/tls:/tls'
         depends_on:
             - 'mariadb'
             - 'rabbitmq'

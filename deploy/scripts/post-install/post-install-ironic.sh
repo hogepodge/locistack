@@ -18,7 +18,6 @@ function wait_for_it() {
 
   until $(curl --output /dev/null \
                --silent \
-	       --head \
 	       ${PROTOCOL}://${HOST}:${PORT}); do
     printf "Waiting on ${SERVICE}."
     sleep 5
@@ -31,7 +30,7 @@ wait_for_it ${CONTROL_HOST_IP} 5000 '--fail --insecure https' 'Keystone'
 wait_for_it ${CONTROL_HOST_IP} 9292 '--fail --insecure https' 'Glance'
 wait_for_it ${CONTROL_HOST_IP} 9696 'http'  'Neutron'
 wait_for_it ${CONTROL_HOST_IP} 8774 '--fail --insecure https' 'Nova'
-wait_for_it ${CONTROL_HOST_IP} 6385 'http' 'Ironic'
+wait_for_it ${CONTROL_HOST_IP} 6385 '--fail --insecure https' 'Ironic'
 
 OPENSTACK='openstack --insecure'
 

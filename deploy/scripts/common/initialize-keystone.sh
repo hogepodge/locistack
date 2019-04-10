@@ -13,53 +13,95 @@ OPENSTACK=openstack
 
 /scripts/common/wait-for-service.sh Keystone 5000
 
-function create_service_user() {
-    local SERVICE_NAME="$1"
-    local SERVICE_PASSWORD="$2"
+function ensure_user() {
+    local USER_NAME="$1"
+    local USER_PASSWORD="$2"
     local OPENSTACK="$3"
 
-    ${OPENSTACK} user show ${SERVICE_NAME}
 
-    if [ $? -eq 1 ]; then
-        ${OPENSTACK} user create --password ${SERVICE_PASSWORD} ${SERVICE_NAME}
-        ${OPENSTACK} role add --user ${SERVICE_NAME} --project service admin
-    fi
+    local EXISTS=$(${OPENSTACK} user list | grep ${USER_NAME})
+    while [ -z "$EXISTS" ]; do
+        ${OPENSTACK} user create --password ${USER_PASSWORD} ${USER_NAME}
+        EXISTS=$(${OPENSTACK} user list | grep ${USER_NAME})
+    done
 }
 
-function create_service() {
+function ensure_role() {
+    local USER_NAME="$1"
+    local USER_PROJECT="$2"
+    local USER_ROLE="$3"
+    local OPENSTACK="$4"
+
+    local EXISTS=$(${OPENSTACK} role assignment list --name |
+        grep ${USER_NAME} |
+        grep ${USER_PROJECT} |
+        grep ${USER_ROLE})
+    while [ -z "$EXISTS" ]; do
+        ${OPENSTACK} role add --user ${USER_NAME} \
+                              --project ${USER_PROJECT} \
+                              ${USER_ROLE}
+        EXISTS=$(${OPENSTACK} role assignment list --name |
+            grep ${USER_NAME} |
+            grep ${USER_PROJECT} |
+            grep ${USER_ROLE})
+    done
+}
+
+function ensure_service() {
   local SERVICE_NAME="$1"
   local SERVICE_TYPE="$2"
   local SERVICE_DESCRIPTION="$3"
   local OPENSTACK="$4"
 
-  ${OPENSTACK} service list | grep ${SERVICE_NAME}
-
-  if [ $? -eq 1 ]; then
+  local EXISTS=$(${OPENSTACK} service list | grep "${SERVICE_NAME} ")
+  while [ -z "$EXISTS" ]; do
       ${OPENSTACK} service create --name ${SERVICE_NAME} \
-                                          --description "${SERVICE_DESCRIPTION}" \
-                                          ${SERVICE_TYPE}
-  fi
+                                  --description "${SERVICE_DESCRIPTION}" \
+                                  ${SERVICE_TYPE}
+      sleep 1
+      EXISTS=$(${OPENSTACK} service list | grep "${SERVICE_NAME} ")
+  done
 }
 
-function create_service_endpoint() {
+function ensure_service_endpoint() {
   local SERVICE_TYPE="$1"
   local ENDPOINT_TYPE="$2"
   local ENDPOINT="$3"
   local REGION="$4"
   local OPENSTACK="$5"
 
-  ${OPENSTACK} endpoint list |
+  local EXISTS=$(${OPENSTACK} endpoint list |
       grep "${REGION}" |
-      grep "${SERVICE_TYPE}" |
+      grep "${SERVICE_TYPE} " |
       grep "${ENDPOINT_TYPE}" |
-      grep "${ENDPOINT}"
+      grep "${ENDPOINT}")
 
-  if [ $? -eq 1 ]; then
-      ${OPENSTACK} endpoint create --region "${REGION}" \
+  while [ -z "$EXISTS" ]; do
+     ${OPENSTACK} endpoint create --region "${REGION}" \
                                           "${SERVICE_TYPE}" \
                                           "${ENDPOINT_TYPE}" \
                                           "${ENDPOINT}"
-  fi
+     sleep 1
+     EXISTS=$(${OPENSTACK} endpoint list |
+        grep "${REGION}" |
+        grep "${SERVICE_TYPE} " |
+        grep "${ENDPOINT_TYPE}" |
+        grep "${ENDPOINT}")
+  done
+}
+
+function ensure_project() {
+    local PROJECT_NAME="$1"
+    local PROJECT_DESCRIPTION="$2"
+    local OPENSTACK="$3"
+
+    local EXISTS=$(${OPENSTACK} project list | grep ${PROJECT_NAME})
+    while [ -z "$EXISTS" ]; do
+        ${OPENSTACK} project create ${PROJECT_NAME} \
+                                    --description "${PROJECT_DESCRIPTION}"
+        sleep 1
+        EXISTS=$(${OPENSTACK} project list | grep ${PROJECT_NAME})
+    done
 }
 
 function initialize_service() {
@@ -73,18 +115,13 @@ function initialize_service() {
     local REGION="$8"
     local OPENSTACK="$9"
 
-    ${OPENSTACK} project show service
-
-    if [ $? -eq 1 ]
-    then
-        ${OPENSTACK} project create service --description "General service project"
-    fi
-
-    create_service_user ${SERVICE_NAME} ${SERVICE_PASSWORD} "${OPENSTACK}"
-    create_service ${SERVICE_NAME} ${SERVICE_TYPE} "${SERVICE_DESCRIPTION}" "${OPENSTACK}"
-    create_service_endpoint ${SERVICE_TYPE} public ${PUBLIC_ENDPOINT} ${REGION} "${OPENSTACK}"
-    create_service_endpoint ${SERVICE_TYPE} internal ${INTERNAL_ENDPOINT} ${REGION} "${OPENSTACK}"
-    create_service_endpoint ${SERVICE_TYPE} admin ${ADMIN_ENDPOINT} ${REGION} "${OPENSTACK}"
+    ensure_project service "General service project" "${OPENSTACK}"
+    ensure_user ${SERVICE_NAME} ${SERVICE_PASSWORD} "${OPENSTACK}"
+    ensure_role ${SERVICE_NAME} service admin "${OPENSTACK}"
+    ensure_service ${SERVICE_NAME} ${SERVICE_TYPE} "${SERVICE_DESCRIPTION}" "${OPENSTACK}"
+    ensure_service_endpoint ${SERVICE_TYPE} public ${PUBLIC_ENDPOINT} ${REGION} "${OPENSTACK}"
+    ensure_service_endpoint ${SERVICE_TYPE} internal ${INTERNAL_ENDPOINT} ${REGION} "${OPENSTACK}"
+    ensure_service_endpoint ${SERVICE_TYPE} admin ${ADMIN_ENDPOINT} ${REGION} "${OPENSTACK}"
 }
 
 export OS_USERNAME=admin

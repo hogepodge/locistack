@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-/scripts/common/wait-for-service.sh Keystone 5000
+/scripts/nova/initialize-keystone.sh
 /scripts/common/wait-for-service.sh Cinder 8776
 /scripts/common/wait-for-service.sh Glance 9292
 /scripts/common/wait-for-service.sh Placement 8778
@@ -13,3 +13,4 @@ uwsgi --uid 42424 \
       --gid 42424 \
       --http :8774 \
       --wsgi-file /var/lib/openstack/bin/nova-api-wsgi
+

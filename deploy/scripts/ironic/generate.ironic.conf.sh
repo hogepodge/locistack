@@ -1,9 +1,21 @@
 #!/bin/bash
 set -x
 
+# Wait for neutron and glance so we can create the network
+until $(curl --output /dev/null --silent http://${CONTROL_HOST_IP}:9696); do
+    printf 'waiting on neutron'
+    sleep 5
+done
+
 source /scripts/common/adminrc
-export CLEANING_NETWORK=`openstack network show provider1 | grep '| id' | cut -d '|' -f 3`
+export CLEANING_NETWORK=`openstack network show provider | grep '| id' | cut -d '|' -f 3`
 export PROVISIONING_NETWORK=$CLEANING_NETWORK
+
+# Wait for glance so we can create the image connection
+until $(curl --output /dev/null --silent http://${CONTROL_HOST_IP}:9292); do
+    printf 'waiting on glance'
+    sleep 5
+done
 
 source /scripts/ironic/glancerc
 export SWIFT_GLANCE_ACCOUNT=`openstack object store account show | grep AUTH | cut -d '|' -f 3 | xargs`
@@ -27,14 +39,13 @@ api_workers = 1
 [keystone_authtoken]
 
 auth_type=password
-auth_uri=https://${CONTROL_HOST_IP}:5000
-auth_url=https://${CONTROL_HOST_IP}:35357
+auth_uri=http://${CONTROL_HOST_IP}:5000
+auth_url=http://${CONTROL_HOST_IP}:35357
 username=ironic
 password=${SERVICE_PASSWORD}
 project_name=service
 project_domain_name=Default
 user_domain_name=Default
-insecure = true
 
 [pxe]
 pxe_append_params = systemd.journald.forward_to_console=yes
@@ -78,26 +89,24 @@ enabled = false
 
 [neutron]
 auth_type = password
-auth_url=https://${CONTROL_HOST_IP}:35357
+auth_url=http://${CONTROL_HOST_IP}:35357
 username=ironic
 password=${SERVICE_PASSWORD}
 project_name=service
 project_domain_name=Default
 user_domain_name=Default
-insecure=true
 
 cleaning_network=${CLEANING_NETWORK}
 provisioning_network=${PROVISIONING_NETWORK}
 
 [glance]
 auth_type = password
-auth_url=https://${CONTROL_HOST_IP}:35357
+auth_url=http://${CONTROL_HOST_IP}:35357
 username=ironic
 password=${SERVICE_PASSWORD}
 project_name=service
 project_domain_name=Default
 user_domain_name=Default
-insecure=true
 
 temp_url_endpoint_type = swift
 swift_endpoint_url = http://${CONTROL_HOST_PRIVATE_IP}:8888
@@ -107,23 +116,21 @@ swift_temp_url_key = ${SWIFT_TEMP_URL_KEY}
 
 [swift]
 auth_type = password
-auth_url=https://${CONTROL_HOST_IP}:35357
+auth_url=http://${CONTROL_HOST_IP}:35357
 username=ironic
 password=${SERVICE_PASSWORD}
 project_name=service
 project_domain_name=Default
 user_domain_name=Default
-insecure=true
 
 [service_catalog]
 auth_type = password
-auth_url=https://${CONTROL_HOST_IP}:35357
+auth_url=http://${CONTROL_HOST_IP}:35357
 username=ironic
 password=${SERVICE_PASSWORD}
 project_name=service
 project_domain_name=Default
 user_domain_name=Default
-insecure=true
 
 [disk_utils]
 iscsi_verify_attempts = 60

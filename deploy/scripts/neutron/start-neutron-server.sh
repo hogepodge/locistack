@@ -1,8 +1,7 @@
 #!/bin/bash
 set -x
 
-/scripts/common/wait-for-service.sh Keystone 5000
-
+/scripts/neutron/initialize-keystone.sh
 /scripts/neutron/generate-configs.sh
 /scripts/neutron/initialize-neutron-database.sh
 

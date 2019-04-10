@@ -54,7 +54,8 @@ ONE=%1
 TWO=%2
 
 echo "creating endpoints"
-/scripts/keystone/initialize-endpoints.sh > endpoint_log 2>&1
-cat endpoint_log
+#/scripts/keystone/initialize-endpoints.sh > endpoint_log 2>&1
+#cat endpoint_log
+/scripts/keystone/initialize-endpoints.sh 
 
 wait $ONE $TWO

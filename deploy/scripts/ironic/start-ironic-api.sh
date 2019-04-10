@@ -3,8 +3,6 @@
 /scripts/ironic/initialize-keystone.sh
 /scripts/common/wait-for-service.sh Cinder 8776
 /scripts/common/wait-for-service.sh Glance 9292
-/scripts/common/wait-for-service.sh Placement 8778
-/scripts/common/wait-for-service.sh Nova 8774
 
 /scripts/ironic/initialize-imagedata.sh
 /scripts/ironic/assign-temp-url-key.sh

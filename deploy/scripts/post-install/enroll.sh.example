@@ -1,4 +1,4 @@
-${OPENSTACK}="openstack --insecure"
+OPENSTACK=openstack
 
 ${OPENSTACK} quota set --ram 100000 admin
 

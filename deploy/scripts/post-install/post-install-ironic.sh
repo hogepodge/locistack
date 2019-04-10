@@ -26,13 +26,13 @@ function wait_for_it() {
 }
 
 
-wait_for_it ${CONTROL_HOST_IP} 5000 '--fail --insecure https' 'Keystone'
-wait_for_it ${CONTROL_HOST_IP} 9292 '--fail --insecure https' 'Glance'
+wait_for_it ${CONTROL_HOST_IP} 5000 '--fail http' 'Keystone'
+wait_for_it ${CONTROL_HOST_IP} 9292 '--fail http' 'Glance'
 wait_for_it ${CONTROL_HOST_IP} 9696 'http'  'Neutron'
-wait_for_it ${CONTROL_HOST_IP} 8774 '--fail --insecure https' 'Nova'
-wait_for_it ${CONTROL_HOST_IP} 6385 '--fail --insecure https' 'Ironic'
+wait_for_it ${CONTROL_HOST_IP} 8774 '--fail http' 'Nova'
+wait_for_it ${CONTROL_HOST_IP} 6385 '--fail http' 'Ironic'
 
-OPENSTACK='openstack --insecure'
+OPENSTACK=openstack
 
 # Sanitize language settings to avoid commands bailing out
 # with "unsupported locale setting" errors.
@@ -57,34 +57,6 @@ if [[ "${OS_USERNAME}" == "" ]]; then
     exit
 fi
 
-
-echo "Test for the network provider"
-${OPENSTACK} network list | grep -q provider
-if [ $? -eq 1 ]; then
-    echo "The network provider does not exist. Creating."
-
-    ${OPENSTACK} network create --share \
-                                --external \
-                                --provider-physical-network provider \
-                                --provider-network-type flat \
-                                provider
-fi
-
-echo "Test for the subnet provider"
-${OPENSTACK} network list | grep -q provider
-if [ $? -eq 1 ]; then
-    echo "The subnet provider does not exist. Creating."
-
-    # It's assumed that this provider network has an existing dhcp server
-    ${OPENSTACK} subnet create --subnet-range ${PROVIDER_SUBNET} \
-                               --gateway ${PROVIDER_GATEWAY} \
-                               --network provider \
-                               --allocation-pool start=${PROVIDER_POOL_START},end=${PROVIDER_POOL_END} \
-                               --dns-nameserver ${PROVIDER_DNS_NAMESERVER} \
-                               --no-dhcp \
-                               provider
-fi
-
 # Get admin user and tenant IDs
 echo "Getting the user/tenant tuple for the admin user"
 ADMIN_USER_ID=$(${OPENSTACK} user list | awk '/ admin / {print $2}')
@@ -106,6 +78,8 @@ ${OPENSTACK} quota set --cores 40 ${ADMIN_PROJECT_ID}
 
 # 96GB ram
 ${OPENSTACK} quota set --ram 96000 ${ADMIN_PROJECT_ID}
+
+/scripts/post-install/enroll.sh
 
 cat << EOF
 locistack bare metal is installed and configured.

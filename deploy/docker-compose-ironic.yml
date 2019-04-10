@@ -6,7 +6,7 @@ volumes:
 services:
     dnsmasq-ipmi:
         image: 'hogepodge/locistack-dnsmasq:master-centos'
-        env_file: '../../config'
+        env_file: '../config/config'
         ports:
             - '53:53'
             - '53:53/udp'
@@ -21,7 +21,7 @@ services:
 
     ironic-api:
         image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
-        env_file: '../../config'
+        env_file: '../config/config'
         hostname: 'ironic-api'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
@@ -36,7 +36,6 @@ services:
             - 'ironic-imagedata-volume:/imagedata'
             - './scripts/common:/scripts/common'
             - './scripts/ironic:/scripts/ironic'
-            - '../config/tls:/tls'
         depends_on:
             - 'mariadb'
             - 'rabbitmq'
@@ -48,10 +47,11 @@ services:
 
     ironic-conductor:
         image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
-        env_file: '../../config'
+        env_file: '../config/config'
         hostname: 'ironic-conductor'
         volumes:
             - 'ironic-imagedata-volume:/imagedata'
+            - './scripts/common:/scripts/common'
             - './scripts/ironic:/scripts/ironic'
             - '/dev:/dev:rw'
         privileged: true 
@@ -68,7 +68,7 @@ services:
 
     ironic-tftp:
         image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
-        env_file: '../../config'
+        env_file: '../config/config'
         hostname: 'ironic-tftp'
         ports:
             - '69:69/udp'
@@ -79,11 +79,12 @@ services:
         volumes:
             - 'ironic-imagedata-volume:/imagedata'
             - './scripts/ironic:/scripts/ironic'
+            - './scripts/common:/scripts/common'
         command: '/scripts/ironic/start-ironic-tftp.sh'
 
     ironic-nginx:
         image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
-        env_file: '../../config'
+        env_file: '../config/config'
         hostname: 'ironic-nginx'
         extra_hosts:
             - '${CONTROL_HOST}:${CONTROL_HOST_IP}'
@@ -94,17 +95,19 @@ services:
         volumes:
             - 'ironic-imagedata-volume:/imagedata'
             - './scripts/ironic:/scripts/ironic'
+            - './scripts/common:/scripts/common'
         command: '/scripts/ironic/start-ironic-nginx.sh'
 
     ironic-iscsi:
         image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
-        env_file: '../../config'
+        env_file: '../config/config'
         hostname: 'ironic-iscsi'
         privileged: true
         network_mode: 'host'
         volumes:
             - '/dev/disk:/dev/disk'
             - './scripts/ironic:/scripts/ironic'
+            - './scripts/common:/scripts/common'
         command: '/scripts/ironic/start-ironic-iscsid.sh'
 
     post-install:

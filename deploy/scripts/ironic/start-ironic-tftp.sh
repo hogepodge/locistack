@@ -2,7 +2,7 @@
 set -x
 
 # Ironic 
-until $(curl --output /dev/null --silent --head https://${CONTROL_HOST_IP}:6385); do
+until $(curl --output /dev/null --silent http://${CONTROL_HOST_IP}:6385); do
     printf 'Waiting on Ironic'
     sleep 5
 done

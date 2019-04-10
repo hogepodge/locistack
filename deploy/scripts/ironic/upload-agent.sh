@@ -19,13 +19,13 @@ function wait_for_it() {
   printf "${SERVICE} available."
 }
 
-wait_for_it ${CONTROL_HOST_IP} 5000 '--fail --insecure https' 'Keystone'
-wait_for_it ${CONTROL_HOST_IP} 8888 'http'  'Swift'
-wait_for_it ${CONTROL_HOST_IP} 9292 '--fail --insecure https' 'Glance'
+wait_for_it ${CONTROL_HOST_IP} 5000 'http' 'Keystone'
+wait_for_it ${CONTROL_HOST_IP} 8888 'http' 'Swift'
+wait_for_it ${CONTROL_HOST_IP} 9292 'http' 'Glance'
 
-OPENSTACK="openstack --insecure"
+OPENSTACK=openstack
 
-source /adminrc
+source /scripts/common/adminrc
 
 curl -o tinyapi-stable-rocky.tar.gz \
   http://tarballs.openstack.org/ironic-python-agent/tinyipa/tinyipa-stable-rocky.tar.gz

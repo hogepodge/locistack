@@ -78,30 +78,29 @@ services:
         command: '/scripts/swift/start-service.sh'
 
 
-#    glance-api:
-#        image: 'hogepodge/locistack-glance:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'glance-api'
-#        privileged: true
-#        extra_hosts:
-#            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        ports:
-#            - '9292:9292'
-#        expose:
-#            - '9292'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/glance:/scripts/glance'
-#            - '../config/tls:/tls'
-#            - 'glance-images:/images'
-#        command: '/scripts/glance/start-glance-api.sh'
+    glance-api:
+        image: 'hogepodge/locistack-glance:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'glance-api'
+        privileged: true
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '9292:9292'
+        expose:
+            - '9292'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/glance:/scripts/glance'
+            - 'glance-images:/images'
+        command: '/scripts/glance/start-glance-api.sh'
 
 #    neutron-server:
 #        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'

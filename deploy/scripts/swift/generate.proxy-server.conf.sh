@@ -13,12 +13,12 @@ pipeline = catch_errors gatekeeper healthcheck proxy-logging cache bulk tempurl 
 
 [filter:keystoneauth]
 use = egg:swift#keystoneauth
-operator_roles = admin,user
+operator_roles = admin,user,service
 
 [filter:authtoken]
 paste.filter_factory = keystonemiddleware.auth_token:filter_factory
-auth_uri = https://${CONTROL_HOST_IP}:5000
-auth_url = https://${CONTROL_HOST_IP}:35357
+auth_uri = http://${CONTROL_HOST_IP}:5000
+auth_url = http://${CONTROL_HOST_IP}:35357
 auth_type = password
 project_domain_name = Default
 user_domain_name = Default
@@ -26,7 +26,6 @@ project_name = service
 username = swift
 password = ${SERVICE_PASSWORD}
 delay_auth_decision = true
-insecure = true
 
 [filter:catch_errors]
 use = egg:swift#catch_errors

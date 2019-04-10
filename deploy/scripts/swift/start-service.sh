@@ -9,7 +9,7 @@ mkdir -p /var/cache/swift
 chown -R root:swift /var/cache/swift
 chmod -R 775 /var/cache/swift
 
-/scripts/swift/initialize-keystone.sh
+/scripts/common/wait-for-service.sh Keystone 5000
 /scripts/swift/generate.proxy-server.conf.sh
 
 mount /dev/loop1 /srv

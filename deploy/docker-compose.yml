@@ -295,169 +295,161 @@ services:
             - './scripts/placement:/scripts/placement'
         command: '/scripts/placement/start-placement-api.sh'
 
-#    nova-api:
-#        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'nova-api'
-#        extra_hosts:
-#            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        ports:
-#            - '8774:8774'
-#        expose:
-#            - '8774'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/nova:/scripts/nova'
-#            - '../config/tls:/tls'
-#        command: '/scripts/nova/start-nova-api.sh'
+    nova-api:
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'nova-api'
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '8774:8774'
+        expose:
+            - '8774'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+        command: '/scripts/nova/start-nova-api.sh'
 
-#    nova-metadata:
-#        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'nova-api'
-#        extra_hosts:
-#            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        ports:
-#            - '8775:8775'
-#        expose:
-#            - '8775'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/nova:/scripts/nova'
-#            - '../config/tls:/tls'
-#        command: '/scripts/nova/start-nova-metadata.sh'
+    nova-metadata:
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'nova-api'
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '8775:8775'
+        expose:
+            - '8775'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+        command: '/scripts/nova/start-nova-metadata.sh'
 
+    nova-conductor:
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'nova-conductor'
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'nova-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+        command: '/scripts/nova/start-nova-conductor.sh'
 
-#    nova-conductor:
-#        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'nova-conductor'
-#        extra_hosts:
-#            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-##        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'nova-api'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/nova:/scripts/nova'
-#            - '../config/tls:/tls'
-#        command: '/scripts/nova/start-nova-conductor.sh'
-#
-#    nova-scheduler:
-#        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'nova-scheduler'
-#        extra_hosts:
-#            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'nova-api'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/nova:/scripts/nova'
-#            - '../config/tls:/tls'
-#        command: '/scripts/nova/start-nova-scheduler.sh'
-#
-#    nova-novncproxy:
-#        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'nova-novncproxy'
-#        extra_hosts:
-#            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-#        ports:
-#            - '6080:6080'
-#        expose:
-#            - '6080'
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'nova-api'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/nova:/scripts/nova'
-#            - '../config/tls:/tls'
-#        command: '/scripts/nova/start-nova-novncproxy.sh'
-#
-#    libvirt:
-#        image: 'hogepodge/locistack-libvirt:${OPENSTACK_RELEASE}-${DISTRO}'
-#        privileged: 'true'
-#        network_mode: 'host'
-#        pid: 'host'
-#        ipc: 'host'
-#        user: 'root'
-#        volumes:
-#            - '/etc/localtime:/etc/localtime'
-#            - '/lib/modules:/lib/modules'
-#            - '/run/:/run/'
-#            - '/dev:/dev'
-#            - '/sys/fs/cgroup:/sys/fs/cgroup'
-#            - '/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket'
-#            - '/var/run/libvirt:/var/run/libvirt'
-#            - '/var/lib/nova:/var/lib/nova'
-#        command: '/start-libvirt.sh'
+    nova-scheduler:
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'nova-scheduler'
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'nova-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+        command: '/scripts/nova/start-nova-scheduler.sh'
 
-#    nova-compute:
-#        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
-#        privileged: 'true'
-#        env_file: '../config/config'
-#        hostname: 'nova-compute'
-#        extra_hosts:
-#            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/nova:/scripts/nova'
-#            - '../config/tls:/tls'
-#            - '/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket'
-#            - '/var/lib/nova:/var/lib/nova'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'nova-api'
-#        command: '/scripts/nova/start-nova-compute.sh'
-#
-#
-#    post-install:
-#        image: 'hogepodge/locistack-openstack:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'post-install'
-#        extra_hosts:
-#            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/post-install:/scripts/post-install'
-#        command: '/scripts/post-install/post-install.sh'
+    nova-novncproxy:
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'nova-novncproxy'
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        ports:
+            - '6080:6080'
+        expose:
+            - '6080'
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'nova-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+        command: '/scripts/nova/start-nova-novncproxy.sh'
+
+    libvirt:
+        image: 'hogepodge/locistack-libvirt:${OPENSTACK_RELEASE}-${DISTRO}'
+        privileged: 'true'
+        network_mode: 'host'
+        pid: 'host'
+        ipc: 'host'
+        user: 'root'
+        volumes:
+            - '/etc/localtime:/etc/localtime'
+            - '/lib/modules:/lib/modules'
+            - '/run/:/run/'
+            - '/dev:/dev'
+            - '/sys/fs/cgroup:/sys/fs/cgroup'
+            - '/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket'
+            - '/var/run/libvirt:/var/run/libvirt'
+            - '/var/lib/nova:/var/lib/nova'
+        command: '/start-libvirt.sh'
+
+    nova-compute:
+        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        privileged: 'true'
+        env_file: '../config/config'
+        hostname: 'nova-compute'
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/nova:/scripts/nova'
+            - '/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket'
+            - '/var/lib/nova:/var/lib/nova'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'nova-api'
+        command: '/scripts/nova/start-nova-compute.sh'
+
+    post-install:
+        image: 'hogepodge/locistack-openstack:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'post-install'
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/post-install:/scripts/post-install'
+        command: '/scripts/post-install/post-install.sh'
 
 networks:
     swiftnet:

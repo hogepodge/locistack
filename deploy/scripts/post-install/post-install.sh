@@ -27,12 +27,12 @@ function wait_for_it() {
 }
 
 
-wait_for_it ${CONTROL_HOST_IP} 5000 '--fail --insecure https' 'Keystone'
-wait_for_it ${CONTROL_HOST_IP} 9292 '--fail --insecure https' 'Glance'
+wait_for_it ${CONTROL_HOST_IP} 5000 '--fail http' 'Keystone'
+wait_for_it ${CONTROL_HOST_IP} 9292 '--fail http' 'Glance'
 wait_for_it ${CONTROL_HOST_IP} 9696 'http'  'Neutron'
-wait_for_it ${CONTROL_HOST_IP} 8774 '--fail --insecure https' 'Nova'
+wait_for_it ${CONTROL_HOST_IP} 8774 '--fail http' 'Nova'
 
-OPENSTACK='openstack --insecure'
+OPENSTACK=openstack
 
 ARCH=$(uname -m)
 IMAGE_URL=http://download.cirros-cloud.net/0.4.0/
@@ -189,13 +189,13 @@ if ! ${OPENSTACK} flavor list | grep -q m1.xlarge; then
     ${OPENSTACK} flavor create --id 5 --ram 16384 --disk 160 --vcpus 6 m1.xlarge
 fi
 
-DEMO_NET_ID=$(openstack --insecure network list | awk '/ demo-net / {print $2}')
+DEMO_NET_ID=$(openstack network list | awk '/ demo-net / {print $2}')
 
 cat << EOF
 Locistack is installed and configured.
 
 To deploy a demo instance, run:
-openstack --insecure server create \\
+openstack server create \\
     --image ${IMAGE_NAME} \\
     --flavor m1.tiny \\
     --key-name mykey \\

@@ -51,20 +51,18 @@ auth_strategy = keystone
 
 [keystone_authtoken]
 
-www_authenticate_uri = https://${CONTROL_HOST_IP}:5000
-auth_url = https://${CONTROL_HOST_IP}:5000
+www_authenticate_uri = http://${CONTROL_HOST_IP}:5000
+auth_url = http://${CONTROL_HOST_IP}:5000
 auth_type = password
 project_domain_name = Default
 user_domain_name = Default
 project_name = service
 username = nova
 password = ${SERVICE_PASSWORD}
-insecure = true
 
 [glance]
 
-api_servers = https://${CONTROL_HOST_IP}:9292
-api_insecure = true
+api_servers = http://${CONTROL_HOST_IP}:9292
 
 [cinder]
 os_region_name = RegionOne
@@ -88,19 +86,18 @@ lock_path = /var/lib/nova/tmp
 [placement]
 
 auth_type = password
-auth_url = https://${CONTROL_HOST_IP}:5000/v3
+auth_url = http://${CONTROL_HOST_IP}:5000/v3
 project_name = service
 username = placement
 password = ${SERVICE_PASSWORD}
 os_region_name = RegionOne
 project_domain_name = Default
 user_domain_name = Default
-insecure = true
 
 [ironic]
 
 auth_type=password
-auth_url=https://${CONTROL_HOST_IP}:5000/v3
+auth_url=http://${CONTROL_HOST_IP}:5000/v3
 project_name=service
 username=ironic
 password=${SERVICE_PASSWORD}
@@ -118,7 +115,7 @@ discover_hosts_in_cells_interval=120
 
 [neutron]
 url = http://${CONTROL_HOST_IP}:9696
-auth_url = https://${CONTROL_HOST_IP}:5000
+auth_url = http://${CONTROL_HOST_IP}:5000
 auth_type = password
 project_domain_name = Default
 user_domain_name = Default
@@ -128,7 +125,6 @@ username = neutron
 password = ${SERVICE_PASSWORD}
 service_metadata_proxy = true
 metadata_proxy_shared_secret = ${METADATA_SECRET}
-insecure = true
 
 [conductor]
 

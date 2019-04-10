@@ -31,6 +31,13 @@ down-v: .clusterstate
 	rm .clusterstate/up .clusterstate/down
 	docker-compose down -v 2>&1 | tee -a .clusterstate/down-v
 
+down-v-ironic: .clusterstate
+	touch .clusterstate/up
+	touch .clusterstate/down
+	cat .clusterstate/up .clusterstate/down > .clusterstate/down-v
+	rm .clusterstate/up .clusterstate/down
+	docker-compose -f docker-compose.yml -f docker-compose-ironic.yml down -v 2>&1 | tee -a .clusterstate/down-v
+
 logs:
 	docker-compose logs -f
 	

@@ -168,116 +168,110 @@ services:
             - 3260:3260
         command: '/scripts/cinder/start-cinder-volume.sh'
 
-#    neutron-server:
-#        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'neutron-server'
-#        extra_hosts:
-#            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        ports:
-#            - '9696:9696'
-#        expose:
-#            - '9696'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/neutron:/scripts/neutron'
-#            - '../config/tls:/tls'
-#        command: '/scripts/neutron/start-neutron-server.sh'
+    neutron-server:
+        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'neutron-server'
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '9696:9696'
+        expose:
+            - '9696'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/neutron:/scripts/neutron'
+        command: '/scripts/neutron/start-neutron-server.sh'
 
+    neutron-linuxbridge-agent:
+        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'neutron-linuxbridge-agent'
+        privileged: true
+        network_mode: 'host'
+        cap_add:
+            - ALL
+        sysctls:
+            net.ipv4.conf.all.promote_secondaries: 1
+            net.ipv4.ip_forward: 1
+            net.ipv4.conf.all.rp_filter: 0
+            net.ipv4.conf.default.rp_filter: 0
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'neutron-server'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/neutron:/scripts/neutron'
+        command: '/scripts/neutron/start-neutron-linuxbridge-agent.sh'
 
-#    neutron-linuxbridge-agent:
-#        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'neutron-linuxbridge-agent'
-#        privileged: true
-#        network_mode: 'host'
-#        cap_add:
-#            - ALL
-#        sysctls:
-#            net.ipv4.conf.all.promote_secondaries: 1
-#           net.ipv4.ip_forward: 1
-#            net.ipv4.conf.all.rp_filter: 0
-#            net.ipv4.conf.default.rp_filter: 0
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'neutron-server'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/neutron:/scripts/neutron'
-#            - '../config/tls:/tls'
-#        command: '/scripts/neutron/start-neutron-linuxbridge-agent.sh'
+    neutron-dhcp-agent:
+        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'neutron-dhcp-agent'
+        privileged: true
+        network_mode: 'host'
+        cap_add:
+            - 'ALL'
+            - 'NET_ADMIN'
+        sysctls:
+            net.ipv4.conf.all.promote_secondaries: 1
+            net.ipv4.ip_forward: 1
+            net.ipv4.conf.all.rp_filter: 0
+            net.ipv4.conf.default.rp_filter: 0
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'neutron-server'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/neutron:/scripts/neutron'
+        command: '/scripts/neutron/start-neutron-dhcp-agent.sh'
 
-#    neutron-dhcp-agent:
-#        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'neutron-dhcp-agent'
-#        privileged: true
-#        network_mode: 'host'
-#        cap_add:
-#            - 'ALL'
-#            - 'NET_ADMIN'
-#        sysctls:
-#            net.ipv4.conf.all.promote_secondaries: 1
-#            net.ipv4.ip_forward: 1
-#            net.ipv4.conf.all.rp_filter: 0
-#            net.ipv4.conf.default.rp_filter: 0
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'neutron-server'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/neutron:/scripts/neutron'
-#            - '../config/tls:/tls'
-#        command: '/scripts/neutron/start-neutron-dhcp-agent.sh'
+    neutron-metadata-agent:
+        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'neutron-metadata-agent'
+        privileged: true
+        network_mode: 'host'
+        cap_add:
+            - 'NET_ADMIN'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'neutron-server'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/neutron:/scripts/neutron'
+        command: '/scripts/neutron/start-neutron-metadata-agent.sh'
 
-#    neutron-metadata-agent:
-#        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'neutron-metadata-agent'
-#        privileged: true
-#        network_mode: 'host'
-#        cap_add:
-#            - 'NET_ADMIN'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'neutron-server'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/neutron:/scripts/neutron'
-#            - '../config/tls:/tls'
-#        command: '/scripts/neutron/start-neutron-metadata-agent.sh'
-
-#    neutron-l3-agent:
-#        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'neutron-l3-agent'
-#        privileged: true
-##        network_mode: 'host'
-#        cap_add:
-#            - 'NET_ADMIN'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'neutron-server'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/neutron:/scripts/neutron'
-#            - '../config/tls:/tls'
-#        command: '/scripts/neutron/start-neutron-l3-agent.sh'
+    neutron-l3-agent:
+        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'neutron-l3-agent'
+        privileged: true
+        network_mode: 'host'
+        cap_add:
+            - 'NET_ADMIN'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'neutron-server'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/neutron:/scripts/neutron'
+        command: '/scripts/neutron/start-neutron-l3-agent.sh'
 
 #    nova-api:
 #        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'

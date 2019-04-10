@@ -1,7 +1,25 @@
 #!/bin/bash
 source /scripts/common/adminrc
+set -x
 
-OPENSTACK="openstack --insecure"
+OPENSTACK=openstack
+
+# Keystone may not be done setting up, so wait for the endpoints.
+ENDPOINT=$(openstack endpoint list | grep network | grep public)
+echo $ENDPOINT
+while [ -z "$ENDPOINT" ]; do
+   ENDPOINT=$(openstack endpoint list | grep network | grep public)
+done
+
+ENDPOINT=$(openstack endpoint list | grep network | grep internal)
+while [ -z "$ENDPOINT" ]; do
+   ENDPOINT=$(openstack endpoint list | grep network | grep internal)
+done
+
+ENDPOINT=$(openstack endpoint list | grep network | grep admin)
+while [ -z "$ENDPOINT" ]; do
+   ENDPOINT=$(openstack endpoint list | grep network | grep admin)
+done
 
 # Both of these commands are safe to run multiple times (idempotent)
 # In the instance where the resources don't exist, they will be

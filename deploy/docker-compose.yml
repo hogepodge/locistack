@@ -273,6 +273,28 @@ services:
             - './scripts/neutron:/scripts/neutron'
         command: '/scripts/neutron/start-neutron-l3-agent.sh'
 
+    placement-api:
+        image: 'hogepodge/locistack-placement:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        hostname: 'placement-api'
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        links:
+            - 'mariadb'
+            - 'rabbitmq'
+        ports:
+            - '8778:8000'
+        expose:
+            - '8000'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/placement:/scripts/placement'
+        command: '/scripts/placement/start-placement-api.sh'
+
 #    nova-api:
 #        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
 #        env_file: '../config/config'
@@ -319,29 +341,6 @@ services:
 #            - '../config/tls:/tls'
 #        command: '/scripts/nova/start-nova-metadata.sh'
 
-#    placement-api:
-#        image: 'hogepodge/locistack-placement:${OPENSTACK_RELEASE}-${DISTRO}'
-#        env_file: '../config/config'
-#        hostname: 'placement-api'
-#        extra_hosts:
-#            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-#        links:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#        ports:
-#            - '8778:8000'
-#        expose:
-#            - '8000'
-#        depends_on:
-#            - 'mariadb'
-#            - 'rabbitmq'
-#            - 'keystone-api'
-#            - 'nova-api'
-#        volumes:
-#            - './scripts/common:/scripts/common'
-#            - './scripts/placement:/scripts/placement'
-#            - '../config/tls:/tls'
-#        command: '/scripts/placement/start-placement-api.sh'
 
 #    nova-conductor:
 #        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'

@@ -16,5 +16,4 @@ EOF
 
 mysql -u root -p$MYSQL_ROOT_PASSWORD -h ${CONTROL_HOST_IP} < /tmp/create_database.sql
 
-# Assumes that /scripts/cinder/generate-configs.sh has been run 
 cinder-manage db sync

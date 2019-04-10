@@ -15,4 +15,3 @@ chmod 440 /etc/sudoers.d/cinder_sudoers
 chown -R root:cinder /etc/cinder
 chmod 740 /etc/cinder/rootwrap.conf
 chmod -R 740 /etc/cinder/rootwrap.d
-

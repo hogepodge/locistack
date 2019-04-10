@@ -23,15 +23,14 @@ max_overflow = 300
 
 [keystone_authtoken]
 
-www_authenticate_uri = https://${CONTROL_HOST_IP}:5000
-auth_url = https://${CONTROL_HOST_IP}:5000
+www_authenticate_uri = http://${CONTROL_HOST_IP}:35357
+auth_url = http://${CONTROL_HOST_IP}:35357
 auth_type = password
 project_domain_name = Default
 user_domain_name = Default
 project_name = service
 username = cinder
 password = ${SERVICE_PASSWORD}
-insecure = true
 
 [oslo_concurrency]
 

@@ -9,8 +9,6 @@
 /scripts/ironic/generate-configs.sh
 /scripts/ironic/initialize-ironic-database.sh
 
-/scripts/ironic/upload-agent.sh
-
 uwsgi --uid 42424 \
       --gid 42424 \
       --http :6385 \

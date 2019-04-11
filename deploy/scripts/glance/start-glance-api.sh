@@ -1,8 +1,6 @@
 #!/bin/bash
 set -x
 
-chown -R 42424:42424 /images
-
 cp /scripts/glance/glance-api-paste.ini /etc/glance/glance-api-paste.ini
 cp /scripts/glance/glance-registry-paste.ini /etc/glance/glance-registry-paste.ini
 

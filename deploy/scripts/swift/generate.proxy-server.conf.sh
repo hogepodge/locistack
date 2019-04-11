@@ -1,7 +1,7 @@
 #!/bin/bash
 cat > /etc/swift/proxy-server.conf <<- EOF
 [DEFAULT]
-bind_port = 8080
+bind_port = 8888
 workers = 1
 user = swift
 log_facility = LOG_LOCAL1

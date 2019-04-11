@@ -2,7 +2,6 @@ version: '2.2'
 
 volumes:
     mariadb-volume:
-    glance-images:
     nova-images:
 
 services:
@@ -60,10 +59,11 @@ services:
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         privileged: true
+#        network_mode: 'host'
         ports:
-            - '8888:8080'
+            - '8888:8888'
         expose:
-            - '8080'
+            - '8888'
         volumes:
             - '/dev/loop1:/dev/loop1'
             - './scripts/common:/scripts/common'
@@ -99,7 +99,6 @@ services:
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/glance:/scripts/glance'
-            - 'glance-images:/images'
         command: '/scripts/glance/start-glance-api.sh'
 
     cinder-api:

@@ -53,5 +53,3 @@ if [ $? -eq 1 ]; then
       --file tinyipa-stable-rocky.gz \
       tinyipa.ramdisk
 fi
-
-rm tinyipa-stable-rocky.vmlinuz tinyipa-stable-rocky.gz tinyapi-stable-rocky.tar.gz

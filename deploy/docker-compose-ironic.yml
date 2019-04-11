@@ -45,6 +45,23 @@ services:
             - 'swift-proxy'
         command: '/scripts/ironic/start-ironic-api.sh'
 
+    ironic-agent:
+        image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        extra_hosts:
+            - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
+        network_mode: 'host'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/ironic:/scripts/ironic'
+        depends_on:
+            - 'mariadb'
+            - 'rabbitmq'
+            - 'keystone-api'
+            - 'glance-api'
+            - 'swift-proxy'
+        command: '/scripts/ironic/upload-agent.sh'
+
     ironic-conductor:
         image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'

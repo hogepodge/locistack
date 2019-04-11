@@ -1,25 +1,6 @@
-source /scripts/common/adminrc
+source /home/hoge/locistack/deploy/adminrc
 
 OPENSTACK='openstack --insecure'
-
-function wait_for_it() {
-  local HOST=$1
-  local PORT=$2
-  local PROTOCOL=$3
-  local SERVICE=$4
-
-  until $(curl --output /dev/null \
-               --silent \
-	       --head \
-	       ${PROTOCOL}://${HOST}:${PORT}); do
-    printf "Waiting on ${SERVICE}."
-    sleep 5
-  done
-  printf "${SERVICE} available."
-}
-
-wait_for_it ${CONTROL_HOST_IP} 5000 '--fail --insecure https' 'Keystone'
-wait_for_it ${CONTROL_HOST_IP} 9292 '--fail --insecure https' 'Glance'
 
 ARCH=$(uname -m)
 IMAGE=centos7-k8s.qcow2
@@ -53,5 +34,4 @@ if [ $? -eq 1 ]; then
                               --file ./${IMAGE} \
                               ${IMAGE_NAME}
 fi
-
 

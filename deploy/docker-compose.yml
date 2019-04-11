@@ -442,7 +442,7 @@ services:
     post-install:
         image: 'hogepodge/locistack-openstack:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
-        hostname: 'post-install'
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         volumes:

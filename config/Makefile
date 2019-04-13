@@ -1,6 +1,6 @@
-VPATH=tls /dev .phonytarget
+VPATH=/dev .phonytarget
 
-enough: kernel-modules certs loop0 loop1
+enough: kernel-modules loop0 loop1
 
 all: docker packages kernel-modules certs loop0 loop1
 
@@ -35,20 +35,6 @@ kernel-modules: packages
 	sudo setenforce Permissive
 	sudo modprobe dm_thin_pool
 
-certs: tls openstack.key openstack.csr openstack.crt
-
-tls:
-	mkdir tls
-
-openstack.key: tls
-	cd tls && openssl genrsa -out openstack.key 2048
-
-openstack.csr: tls openstack.key
-	cd tls && openssl req -new -key openstack.key -out openstack.csr
-
-openstack.crt: tls openstack.key openstack.csr
-	cd tls && openssl x509 -req -days 365 -in openstack.csr -signkey openstack.key -out openstack.crt
-
 cinder-storage:
 	sudo truncate --size=20G cinder-storage
 	./scripts/setup-cinder.sh
@@ -60,7 +46,7 @@ loop0: cinder-storage
 
 swift-storage:
 	sudo truncate --size=20G swift-storage
-	mkfs.xfs swift-storage
+	sudo mkfs.xfs swift-storage
 
 loop1: swift-storage
 	sudo losetup /dev/loop1 swift-storage

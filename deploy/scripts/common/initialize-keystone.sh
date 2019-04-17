@@ -19,10 +19,10 @@ function ensure_user() {
     local OPENSTACK="$3"
 
 
-    local EXISTS=$(${OPENSTACK} user list | grep ${USER_NAME})
+    local EXISTS=$(${OPENSTACK} user list | grep "${USER_NAME} ")
     while [ -z "$EXISTS" ]; do
         ${OPENSTACK} user create --password ${USER_PASSWORD} ${USER_NAME}
-        EXISTS=$(${OPENSTACK} user list | grep ${USER_NAME})
+        EXISTS=$(${OPENSTACK} user list | grep "${USER_NAME} ")
     done
 }
 

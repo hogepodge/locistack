@@ -1,7 +1,7 @@
 VPATH=images .phonytarget .build
 
-OPENSTACK_RELEASE=rocky
-STABLE_PREFIX=stable/
+OPENSTACK_RELEASE=master
+#STABLE_PREFIX=stable/
 DISTRO=centos
 
 DOCKERHUB_NAMESPACE=hogepodge
@@ -30,7 +30,8 @@ LOCI_PROJECTS = locistack-keystone \
 		locistack-placement \
 		locistack-cinder \
 		locistack-ironic \
-		locistack-swift
+		locistack-swift \
+		locistack-horizon
 
 LOCISTACK_BUILDS = locistack-base \
 		locistack-libvirt \
@@ -39,7 +40,7 @@ LOCISTACK_BUILDS = locistack-base \
 		$(LOCI_PROJECTS) \
 		locistack-openstack
 
-locistack: $(LOCISTACK_BUILDS)
+locistack: $(LOCISTACK_BUILDS) horizon
 
 .phonytarget:
 	mkdir .phonytarget
@@ -50,7 +51,8 @@ loci: .build
 .build:
 	mkdir .build
 
-locistack-base: loci
+
+locistack-base: loci | .phonytarget
 	$(BUILD) -t $(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) .build/loci/dockerfiles/$(DISTRO)
 	docker image inspect $(DOCKERHUB_NAMESPACE)/locistack-base:$(DIST) > .phonytarget/$@
 
@@ -60,7 +62,7 @@ locistack-epel: locistack-base
 		-t $(DOCKERHUB_NAMESPACE)/locistack-epel:$(DIST) 
 	docker image inspect $(DOCKERHUB_NAMESPACE)/locistack-epel:$(DIST)
 
-locistack-requirements: locistack-base
+locistack-requirements: locistack-base | .phonytarget
 	$(BUILD) .build/loci \
 		--build-arg PROJECT=requirements \
 		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
@@ -69,18 +71,18 @@ locistack-requirements: locistack-base
 	$(PUSH) $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-locistack-libvirt: locistack-base
+locistack-libvirt: locistack-base | .phonytarget
 	$(BUILD) libvirt \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-locistack-dnsmasq:
+locistack-dnsmasq: | .phonytarget
 	$(BUILD) dnsmasq \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
 
-$(LOCI_PROJECTS): locistack-base locistack-requirements
+$(LOCI_PROJECTS): locistack-base locistack-requirements | .phonytarget
 	$(BUILD) .build/loci \
 		--build-arg PROJECT=$(subst locistack-,$(EMPTY),$@) \
 		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
@@ -91,7 +93,7 @@ $(LOCI_PROJECTS): locistack-base locistack-requirements
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-locistack-ironic: locistack-epel locistack-requirements
+locistack-ironic: locistack-epel locistack-requirements | .phonytarget
 	$(BUILD) .build/loci \
 		--build-arg PROJECT=$(subst locistack-,$(EMPTY),$@) \
 		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
@@ -102,7 +104,7 @@ locistack-ironic: locistack-epel locistack-requirements
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-locistack-cinder: locistack-epel locistack-requirements
+locistack-cinder: locistack-epel locistack-requirements | .phonytarget
 	$(BUILD) .build/loci \
 		--build-arg PROJECT=$(subst locistack-,$(EMPTY),$@) \
 		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
@@ -113,8 +115,11 @@ locistack-cinder: locistack-epel locistack-requirements
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
+locistack-horizon: | .phonytarget
+	docker build -t $(DOCKERHUB_NAMESPACE)/locistack-horizon:$(OPENSTACK_RELEASE)-$(DIST) horizon/.
+	docker image inspect $(DOCKERHUB_NAMESPACE)/locistack-horizon:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
 
-locistack-openstack: locistack-base
+locistack-openstack: locistack-base | .phonytarget
 	$(BUILD) openstack \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST)
 	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@

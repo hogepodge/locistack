@@ -450,6 +450,16 @@ services:
             - './scripts/post-install:/scripts/post-install'
         command: '/scripts/post-install/post-install.sh'
 
+    horizon:
+        image: 'hogepodge/locistack-horizon:${OPENSTACK_RELEASE}-${DISTRO}'
+        env_file: '../config/config'
+        network_mode: 'host'
+        volumes:
+            - './scripts/common:/scripts/common'
+            - './scripts/horizon:/scripts/horizon'
+        command: '/scripts/horizon/start_horizon.sh'
+
+
 networks:
     swiftnet:
         driver: bridge

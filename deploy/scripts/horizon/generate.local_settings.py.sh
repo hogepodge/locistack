@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /etc/openstack-dashboard/local_settings.py <<- EOF
+cat > /etc/openstack-dashboard/local_settings <<- EOF
 
 # -*- coding: utf-8 -*-
 
@@ -150,7 +150,7 @@ LOCAL_PATH = '/tmp'
 # (usually behind a load-balancer). Either you have to make sure that a session
 # gets all requests routed to the same dashboard instance or you set the same
 # SECRET_KEY for all of them.
-#SECRET_KEY='6ffbee28e0e2a21bce56'
+SECRET_KEY='6ffbee28e0e2a21bce56'
 
 # We recommend you use memcached for development; otherwise after every reload
 # of the django development server, you will have to login again. To use

@@ -81,13 +81,10 @@ services:
     glance-api:
         image: 'hogepodge/locistack-glance:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
-        hostname: 'glance-api'
         privileged: true
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         ports:
             - '9292:9292'
         expose:
@@ -104,12 +101,9 @@ services:
     cinder-api:
         image: 'hogepodge/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
-        hostname: 'cinder-api'
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         ports:
             - '8776:8776'
         expose:
@@ -126,12 +120,9 @@ services:
     cinder-scheduler:
         image: 'hogepodge/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
-        hostname: 'cinder-scheduler'
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         depends_on:
             - 'mariadb'
             - 'rabbitmq'
@@ -144,13 +135,10 @@ services:
     cinder-volume:
         image: 'hogepodge/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
-        hostname: 'cinder-volume'
+        network_mode: 'host'
         privileged: true
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         depends_on:
             - 'mariadb'
             - 'rabbitmq'
@@ -171,11 +159,9 @@ services:
         image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'neutron-server'
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         ports:
             - '9696:9696'
         expose:
@@ -278,9 +264,6 @@ services:
         hostname: 'placement-api'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         ports:
             - '8778:8000'
         expose:
@@ -298,11 +281,9 @@ services:
         image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-api'
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         ports:
             - '8774:8774'
         expose:
@@ -320,11 +301,9 @@ services:
         image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-api'
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         ports:
             - '8775:8775'
         expose:
@@ -342,11 +321,9 @@ services:
         image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-conductor'
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         depends_on:
             - 'mariadb'
             - 'rabbitmq'
@@ -361,11 +338,9 @@ services:
         image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-scheduler'
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         depends_on:
             - 'mariadb'
             - 'rabbitmq'
@@ -380,15 +355,13 @@ services:
         image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-novncproxy'
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
         ports:
             - '6080:6080'
         expose:
             - '6080'
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         depends_on:
             - 'mariadb'
             - 'rabbitmq'
@@ -422,11 +395,9 @@ services:
         privileged: 'true'
         env_file: '../config/config'
         hostname: 'nova-compute'
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         volumes:
             - './scripts/common:/scripts/common'
             - './scripts/nova:/scripts/nova'

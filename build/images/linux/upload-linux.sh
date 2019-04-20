@@ -3,8 +3,8 @@ source /home/hoge/locistack/deploy/adminrc
 OPENSTACK='openstack'
 
 ARCH=$(uname -m)
-IMAGE=centos.qcow2
-IMAGE_NAME=centos
+IMAGE=linux.qcow2
+IMAGE_NAME=linux
 IMAGE_TYPE=linux
 
 # Test for credentials set

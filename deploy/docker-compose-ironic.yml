@@ -23,11 +23,9 @@ services:
         image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'ironic-api'
+        network_mode: 'host'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
-        links:
-            - 'mariadb'
-            - 'rabbitmq'
         ports:
             - '6385:6385'
         expose:

@@ -12,7 +12,7 @@ linux.qcow2: | linux
 	DIB_DEV_USER_USERNAME=hoge \
 	DIB_DEV_USER_PWDLESS_SUDO=true \
 	DIB_DEV_USER_AUTHORIZED_KEYS=~/.ssh/id_rsa.pub \
-	sudo disk-image-create \
+	sudo -E disk-image-create \
 		bootloader \
 		centos7 \
 		cloud-init-nocloud \
@@ -29,7 +29,7 @@ k8s.qcow2: | k8s
 	DIB_DEV_USER_PWDLESS_SUDO=true \
 	DIB_DEV_USER_AUTHORIZED_KEYS=~/.ssh/id_rsa.pub \
 	ELEMENTS_PATH=$(HOME)/locistack/build/images/elements \
-	sudo disk-image-create \
+	sudo -E disk-image-create \
 		bootloader \
 		centos7 \
 		cloud-init-nocloud \

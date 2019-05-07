@@ -27,10 +27,10 @@ OPENSTACK=openstack
 
 source /scripts/common/adminrc
 
-curl -o tinyapi-stable-rocky.tar.gz \
-  http://tarballs.openstack.org/ironic-python-agent/tinyipa/tinyipa-stable-rocky.tar.gz
+#curl -o tinyapi-stable-rocky.tar.gz \
+#  http://tarballs.openstack.org/ironic-python-agent/tinyipa/tinyipa-stable-rocky.tar.gz
 
-tar -xvzf tinyapi-stable-rocky.tar.gz
+#tar -xvzf tinyapi-stable-rocky.tar.gz
 
 ${OPENSTACK} image list | grep -q tinyipa.vmlinuz
 if [ $? -eq 1 ]; then
@@ -39,7 +39,7 @@ if [ $? -eq 1 ]; then
       --id 11111111-1111-1111-1111-111111111110 \
       --disk-format aki \
       --container-format aki \
-      --file tinyipa-stable-rocky.vmlinuz \
+      --file /scripts/ironic/tinyipa-stable-rocky.vmlinuz \
       tinyipa.vmlinuz
 fi
 
@@ -50,6 +50,6 @@ if [ $? -eq 1 ]; then
       --id 11111111-1111-1111-1111-111111111111 \
       --disk-format ari \
       --container-format ari \
-      --file tinyipa-stable-rocky.gz \
+      --file /scripts/ironic/tinyipa-stable-rocky.gz \
       tinyipa.ramdisk
 fi

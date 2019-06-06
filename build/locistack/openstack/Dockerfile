@@ -1,4 +1,4 @@
-FROM hogepodge/locistack-base:centos
+FROM hogepodge/loci-base:centos
 
 MAINTAINER "Chris Hoge" <chris@openstack.org>
 

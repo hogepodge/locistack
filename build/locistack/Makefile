@@ -1,4 +1,4 @@
-VPATH=images .phonytarget .build
+VPATH=images .build
 
 OPENSTACK_RELEASE=master
 #STABLE_PREFIX=stable/
@@ -31,39 +31,25 @@ LOCI_PROJECTS = locistack-keystone \
 		locistack-ironic \
 		locistack-swift
 
-locistack: $(LOCI_PROJECTS)
+LOCISTACK_EXTRAS = locistack-horizon \
+		   locistack-libvirt \
+		   locistack-dnsmasq \
+		   locistack-openstack
 
-.phonytarget:
-	mkdir .phonytarget
+locistack: $(LOCI_PROJECTS) $(LOCISTACK_EXTRAS)
 
 .build:
 	mkdir .build
 
-$(LOCI_PROJECTS): | .phonytarget
-	$(BUILD) . \
+$(LOCI_PROJECTS): | .build
+	$(BUILD) project/. \
 		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/$(subst locistack-,loci-,$@):$(OPENSTACK_RELEASE)-$(DIST) \
 		--build-arg DIST_PACKAGES=$($(subst locistack-,$(EMPTY),$@)-DIST_PACKAGES) \
 		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
-	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
+	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .build/$@
 
-#locistack-ironic: locistack-epel locistack-requirements | .phonytarget
-#	$(BUILD) .build/loci \
-#		--build-arg PROJECT=$(subst locistack-,$(EMPTY),$@) \
-#		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
-#		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-epel:$(DIST) \
-#		--build-arg WHEELS=$(DOCKERHUB_NAMESPACE)/locistack-requirements:$(OPENSTACK_RELEASE)-$(DIST) \
-#		--build-arg DIST_PACKAGES=$($(subst locistack-,$(EMPTY),$@)-DIST_PACKAGES) \
-#		--build-arg PIP_PACKAGES=$(PIP_PACKAGES) \
-#		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
-#	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@
+$(LOCISTACK_EXTRAS): | .build
+	$(BUILD) $(subst locistack-,$(EMPTY),$@)/. \
+		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
+	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .build/$@
 
-#locistack-cinder: locistack-epel locistack-requirements | .phonytarget
-#	$(BUILD) .build/loci \
-#		--build-arg PROJECT=$(subst locistack-,$(EMPTY),$@) \
-#		--build-arg PROJECT_REF=$(STABLE_PREFIX)$(OPENSTACK_RELEASE) \
-#		--build-arg FROM=$(DOCKERHUB_NAMESPACE)/locistack-epel:$(DIST) \
-#		--build-arg WHEELS=$(DOCKERHUB_NAMESPACE)/locistack-requirements:$(OPENSTACK_RELEASE)-$(DIST) \
-#		--build-arg DIST_PACKAGES=$($(subst locistack-,$(EMPTY),$@)-DIST_PACKAGES) \
-#		--build-arg PIP_PACKAGES=$(PIP_PACKAGES) \
-#		--tag $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) --no-cache
-#	docker image inspect $(DOCKERHUB_NAMESPACE)/$@:$(OPENSTACK_RELEASE)-$(DIST) > .phonytarget/$@

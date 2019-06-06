@@ -1,4 +1,4 @@
-FROM hogepodge/locistack-base:centos
+FROM hogepodge/loci-base:centos
 
 RUN yum update -y \
  && yum install -y vim \

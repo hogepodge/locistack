@@ -5,7 +5,7 @@ volumes:
 
 services:
     dnsmasq-ipmi:
-        image: 'hogepodge/locistack-dnsmasq:master-centos'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-dnsmasq:master-centos'
         env_file: '../config/config'
         ports:
             - '53:53'
@@ -20,7 +20,7 @@ services:
         command: '/scripts/dnsmasq/start_dnsmasq.sh'
 
     ironic-api:
-        image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'ironic-api'
         network_mode: 'host'
@@ -44,7 +44,7 @@ services:
         command: '/scripts/ironic/start-ironic-api.sh'
 
     ironic-agent:
-        image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         extra_hosts:
             - "${CONTROL_HOST}:${CONTROL_HOST_IP}"
@@ -61,7 +61,7 @@ services:
         command: '/scripts/ironic/upload-agent.sh'
 
     ironic-conductor:
-        image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'ironic-conductor'
         volumes:
@@ -82,7 +82,7 @@ services:
         command: '/scripts/ironic/start-ironic-conductor.sh'
 
     ironic-tftp:
-        image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'ironic-tftp'
         ports:
@@ -98,7 +98,7 @@ services:
         command: '/scripts/ironic/start-ironic-tftp.sh'
 
     ironic-nginx:
-        image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'ironic-nginx'
         extra_hosts:
@@ -114,7 +114,7 @@ services:
         command: '/scripts/ironic/start-ironic-nginx.sh'
 
     ironic-iscsi:
-        image: 'hogepodge/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-ironic:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'ironic-iscsi'
         privileged: true

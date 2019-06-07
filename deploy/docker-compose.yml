@@ -28,7 +28,7 @@ services:
             - '5672'
 
     keystone-api:
-        image: 'hogepodge/locistack-keystone:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-keystone:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'keystone'
         extra_hosts:
@@ -53,7 +53,7 @@ services:
             - 'rabbitmq'
 
     swift-proxy:
-        image: 'hogepodge/locistack-swift:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-swift:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'swift'
         extra_hosts:
@@ -79,7 +79,7 @@ services:
 
 
     glance-api:
-        image: 'hogepodge/locistack-glance:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-glance:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         privileged: true
         network_mode: 'host'
@@ -99,7 +99,7 @@ services:
         command: '/scripts/glance/start-glance-api.sh'
 
     cinder-api:
-        image: 'hogepodge/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         network_mode: 'host'
         extra_hosts:
@@ -118,7 +118,7 @@ services:
         command: '/scripts/cinder/start-cinder-api.sh'
 
     cinder-scheduler:
-        image: 'hogepodge/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         network_mode: 'host'
         extra_hosts:
@@ -133,7 +133,7 @@ services:
         command: '/scripts/cinder/start-cinder-scheduler.sh'
 
     cinder-volume:
-        image: 'hogepodge/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-cinder:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         network_mode: 'host'
         privileged: true
@@ -156,7 +156,7 @@ services:
         command: '/scripts/cinder/start-cinder-volume.sh'
 
     neutron-server:
-        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'neutron-server'
         network_mode: 'host'
@@ -176,7 +176,7 @@ services:
         command: '/scripts/neutron/start-neutron-server.sh'
 
     neutron-linuxbridge-agent:
-        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'neutron-linuxbridge-agent'
         privileged: true
@@ -199,7 +199,7 @@ services:
         command: '/scripts/neutron/start-neutron-linuxbridge-agent.sh'
 
     neutron-dhcp-agent:
-        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'neutron-dhcp-agent'
         privileged: true
@@ -223,7 +223,7 @@ services:
         command: '/scripts/neutron/start-neutron-dhcp-agent.sh'
 
     neutron-metadata-agent:
-        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'neutron-metadata-agent'
         privileged: true
@@ -241,7 +241,7 @@ services:
         command: '/scripts/neutron/start-neutron-metadata-agent.sh'
 
     neutron-l3-agent:
-        image: 'hogepodge/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-neutron:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'neutron-l3-agent'
         privileged: true
@@ -259,7 +259,7 @@ services:
         command: '/scripts/neutron/start-neutron-l3-agent.sh'
 
     placement-api:
-        image: 'hogepodge/locistack-placement:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-placement:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'placement-api'
         extra_hosts:
@@ -278,7 +278,7 @@ services:
         command: '/scripts/placement/start-placement-api.sh'
 
     nova-api:
-        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-api'
         network_mode: 'host'
@@ -298,7 +298,7 @@ services:
         command: '/scripts/nova/start-nova-api.sh'
 
     nova-metadata:
-        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-api'
         network_mode: 'host'
@@ -318,7 +318,7 @@ services:
         command: '/scripts/nova/start-nova-metadata.sh'
 
     nova-conductor:
-        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-conductor'
         network_mode: 'host'
@@ -335,7 +335,7 @@ services:
         command: '/scripts/nova/start-nova-conductor.sh'
 
     nova-scheduler:
-        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-scheduler'
         network_mode: 'host'
@@ -352,7 +352,7 @@ services:
         command: '/scripts/nova/start-nova-scheduler.sh'
 
     nova-novncproxy:
-        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         hostname: 'nova-novncproxy'
         network_mode: 'host'
@@ -373,7 +373,7 @@ services:
         command: '/scripts/nova/start-nova-novncproxy.sh'
 
     libvirt:
-        image: 'hogepodge/locistack-libvirt:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-libvirt:${OPENSTACK_RELEASE}-${DISTRO}'
         privileged: 'true'
         network_mode: 'host'
         pid: 'host'
@@ -391,7 +391,7 @@ services:
         command: '/start-libvirt.sh'
 
     nova-compute:
-        image: 'hogepodge/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-nova:${OPENSTACK_RELEASE}-${DISTRO}'
         privileged: 'true'
         env_file: '../config/config'
         hostname: 'nova-compute'
@@ -411,7 +411,7 @@ services:
         command: '/scripts/nova/start-nova-compute.sh'
 
     post-install:
-        image: 'hogepodge/locistack-openstack:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-openstack:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         network_mode: 'host'
         extra_hosts:
@@ -422,7 +422,7 @@ services:
         command: '/scripts/post-install/post-install.sh'
 
     horizon:
-        image: 'hogepodge/locistack-horizon:${OPENSTACK_RELEASE}-${DISTRO}'
+        image: '${DOCKERHUB_NAMESPACE}/locistack-horizon:${OPENSTACK_RELEASE}-${DISTRO}'
         env_file: '../config/config'
         network_mode: 'host'
         volumes:

@@ -8,14 +8,14 @@ DOCKERHUB_NAMESPACE=hogepodge
 
 keystone-DIST_PACKAGES="curl mariadb vim wget which"
 glance-DIST_PACKAGES="curl mariadb vim wget which"
-neutron-DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived mariadb openvswitch uuid vim wget which"
-nova-DIST_PACKAGES="curl libvirt libxml2 mariadb openvswitch uuid vim wget which"
-placement-DIST_PACKAGES="curl libxml2 mariadb uuid vim wget which"
-cinder-DIST_PACKAGES="curl lvm2 mariadb targetcli device-mapper-persistent-data vim wget which"
-ironic-DIST_PACKAGES="epel-release curl gdisk gettext graphviz ipmitool ipxe-bootimgs targetcli mariadb nginx parted psmisc qemu-img syslinux tftp-server wget which xinetd"
-swift-DIST_PACKAGES="rsync liberasurecode memcached vim wget curl which"
+neutron-DIST_PACKAGES="bridge-utils conntrack-tools curl dnsmasq dnsmasq-utils ebtables haproxy iproute ipset keepalived mariadb python-openstackclient python-swiftclient python-ironicclient openvswitch uuid vim wget which"
+nova-DIST_PACKAGES="curl libvirt libxml2 mariadb openvswitch python-openstackclient python-swiftclient python-ironicclient uuid vim wget which"
+placement-DIST_PACKAGES="curl libxml2 mariadb python-openstackclient python-swiftclient python-ironicclient uuid vim wget which"
+cinder-DIST_PACKAGES="curl lvm2 mariadb targetcli device-mapper-persistent-data python-openstackclient python-swiftclient python-ironicclient vim wget which"
+ironic-DIST_PACKAGES="epel-release curl gdisk gettext graphviz ipmitool ipxe-bootimgs targetcli mariadb nginx parted psmisc python-openstackclient python-swiftclient python-ironicclient qemu-img syslinux tftp-server wget which xinetd"
+swift-DIST_PACKAGES="rsync liberasurecode memcached python-openstackclient python-swiftclient python-ironicclient vim wget curl which"
 #horizon-DIST_PACKAGES="httpd curl mariadb memcached mod_wsgi vim wget which"
-PIP_PACKAGES="python-openstackclient python-swiftclient python-ironicclient keystonemiddleware"
+#PIP_PACKAGES="python-openstackclient python-swiftclient python-ironicclient keystonemiddleware"
 EMPTY:=
 DIST=$(subst :,$(EMPTY),$(DISTRO))
 

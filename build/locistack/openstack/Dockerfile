@@ -4,6 +4,8 @@ MAINTAINER "Chris Hoge" <chris@openstack.org>
 
 RUN yum update -y \
   && yum install -y \
+         less \
+         openssh-clients \
          python-openstackclient \
          python-ironicclient \
          which \
